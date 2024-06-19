@@ -29,6 +29,21 @@ export type Immutable<T extends AnyData> =
   T extends {} ? ImmutableInterface<T> :
   never;
 
+type Underfined<T> = { [P in keyof T]: P extends undefined ? T[P] : never };
+type FilterFlags<Base, Condition> = {
+  [key in keyof Base]:
+  Base[key] extends Condition ? key : never
+};
+
+type AllowedNames<Base, Condition> =
+  FilterFlags<Base, Condition>[keyof Base];
+
+type SubType<Base, Condition> =
+  Pick<Base, AllowedNames<Base, Condition>>;
+
+export type OptionalKeys<T> = Exclude<keyof T, NonNullable<keyof SubType<Underfined<T>, never>>>;
+export type MakeOnlyOptionalKeys<T> = { [key in OptionalKeys<T>]: T[key] };
+
 export namespace TableTools {
   /**
    * clones the immutable data and executes the function with draft as argument

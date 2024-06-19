@@ -1,24 +1,8 @@
 //!native
 import { RunService } from "@rbxts/services";
+import { MakeOnlyOptionalKeys } from "./table_tools";
 
-type Underfined<T> = { [P in keyof T]: P extends undefined ? T[P] : never };
-type FilterFlags<Base, Condition> = {
-  [key in keyof Base]:
-  Base[key] extends Condition ? key : never
-};
-
-type AllowedNames<Base, Condition> =
-  FilterFlags<Base, Condition>[keyof Base];
-
-type SubType<Base, Condition> =
-  Pick<Base, AllowedNames<Base, Condition>>;
-
-declare global {
-  type GetReturnType<T> = T extends (...args: any[]) => infer K ? K : never
-  type OptionalKeys<T> = Exclude<keyof T, NonNullable<keyof SubType<Underfined<T>, never>>>;
-  type MakeOnlyOptionalKeys<T> = { [key in OptionalKeys<T>]: T[key] };
-}
-
+export type GetReturnType<T> = T extends (...args: any[]) => infer K ? K : never
 export namespace FunctionTools {
   export function ExecuteIfClient<T extends unknown[], ReturnType>(callback: (...args: T) => ReturnType, ...args: T) {
     if (RunService.IsClient()) return callback(...args);
