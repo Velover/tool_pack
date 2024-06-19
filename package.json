@@ -1,6 +1,6 @@
 {
   "name": "@rbxts/tool_pack",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "out/init.lua",
   "scripts": {
@@ -8,8 +8,12 @@
     "watch": "rbxtsc -w",
     "prepublishOnly": "npm run build"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Velover/tool_pack/tree/master"
+  },
   "keywords": [],
-  "author": "",
+  "author": "Catargo",
   "license": "ISC",
   "types": "out/index.d.ts",
   "files": [
