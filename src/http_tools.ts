@@ -1,5 +1,6 @@
 import { HttpService } from "@rbxts/services";
 import { FunctionTools } from "./function_tools";
+import { MakeOnlyOptionalKeys } from "./table_tools";
 
 export namespace HttpTools {
   /**removes lines with comments from the code
