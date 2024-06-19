@@ -2,8 +2,9 @@ import { HttpService } from "@rbxts/services";
 import { FunctionTools } from "./function_tools";
 
 export namespace HttpTools {
-  //removes lines with comments from the code
-  //with them, cannot decode
+  /**removes lines with comments from the code
+   * with them, cannot decode
+  */
   export function RemoveJSONComments(json_code_text: string) {
     const lines = json_code_text.split("\n");
     const filtered_lines = lines.filter((value) => {

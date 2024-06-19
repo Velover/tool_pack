@@ -3,7 +3,8 @@
 import { Workspace } from "@rbxts/services";
 
 export namespace PhysicsTools {
-  /**calculates the vertical velocity for parabolic trajectory with horizontal speed
+  /**WIP
+   * calculates the vertical velocity for parabolic trajectory with horizontal speed
    * @param horizontal_speed horizontal speed
    * @param offset distance from launcher to target; (target.Position - launcher.Position);
    */
@@ -17,15 +18,14 @@ export namespace PhysicsTools {
   }
 
   /**
-   * 
-   * @param target 
-   * @param start 
-   * @param finish 
+   * @param point 
+   * @param start start of the line 
+   * @param finish end of the line
    * @returns [t, position, is_on_the_line]
    */
-  export function GetClosestPositionOnLine(target: Vector3, start: Vector3, finish: Vector3): LuaTuple<[number, Vector3, boolean]> {
+  export function GetClosestPositionOnLine(point: Vector3, start: Vector3, finish: Vector3): LuaTuple<[number, Vector3, boolean]> {
     const line_offset = finish.sub(start);
-    const offset = target.sub(start);
+    const offset = point.sub(start);
 
     const t = offset.Dot(line_offset) / line_offset.Dot(line_offset);
     const position_of_line_offset = line_offset.mul(t);

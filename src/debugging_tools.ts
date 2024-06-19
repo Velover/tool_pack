@@ -139,17 +139,100 @@ export namespace DebuggingTools {
       return recursive_map;
     }
 
+    /**
+     * @param turn_arrays_into_maps will treat the indexes as keys so all instances like 
+     * ```[number]: [[0]: number] will be [0...12]: [[0]: number]```
+     * 
+     * @param exact_values will return exact values instead of type e.g
+     * ```[number]: {[0]: "hello", [1]: "world", [3]: "!"}```, equivalent to ```("hello" | "world" | "!")[]```
+     * 
+     * @returns analized content of the json, 
+     * looks like
+     * 
+     * ```ts
+     * {
+     * [key]: [number] // key not optional variable that is a number
+     * [key?]: [number, string] //key is optional variable that is a number or string
+     * [key]: [ //key is not optional variable that is {name: string | number, sub_key?: number}
+     *  {
+     *    [name]: [string, number]
+     *    [sub_key?] [number]
+     *  }
+     * ]
+     * [number]: [ //equivalent to number[]
+     *  [0]: number
+     * ]
+     * [number]: [ //equivalent to string[]
+     *  [0]: string
+     * ]
+     * }
+     * ```
+     * 
+     * can be confusing for results like
+     * ```lua
+     * {
+     * [key] = {
+     *  [0] = {[name?]: string},
+     * }
+     * ```
+     * it still means {[key]: {name?: string}}
+     * 
+     * useful for analizing large databases
+     */
     export function AnalizeAndReturnJson(...args: Parameters<typeof AnalizeJSON>) {
       const recursive_table = AnalizeJSON(...args);
       const recursive_map = ConvertRecursiveTableToRecursiveMap(recursive_table);
       return recursive_map;
     }
 
+    /**
+     * @param turn_arrays_into_maps will treat the indexes as keys so all instances like 
+     * ```[number]: [[0]: number] will be [0...12]: [[0]: number]```
+     * 
+     * @param exact_values will return exact values instead of type e.g
+     * ```[number]: {[0]: "hello", [1]: "world", [3]: "!"}```, equivalent to ```("hello" | "world" | "!")[]```
+     * 
+     * @returns analized content of the json, 
+     * looks like
+     * 
+     * ```ts
+     * {
+     * [key]: [number] // key not optional variable that is a number
+     * [key?]: [number, string] //key is optional variable that is a number or string
+     * [key]: [ //key is not optional variable that is {name: string | number, sub_key?: number}
+     *  {
+     *    [name]: [string, number]
+     *    [sub_key?] [number]
+     *  }
+     * ]
+     * [number]: [ //equivalent to number[]
+     *  [0]: number
+     * ]
+     * [number]: [ //equivalent to string[]
+     *  [0]: string
+     * ]
+     * }
+     * ```
+     * 
+     * can be confusing for results like
+     * ```lua
+     * {
+     * [key] = {
+     *  [0] = {[name?]: string},
+     * }
+     * ```
+     * it still means {[key]: {name?: string}}
+     * 
+     * useful for analizing large databases
+     */
     export function AnalizeAndPrintJson(...args: Parameters<typeof AnalizeAndReturnJson>) {
       print(AnalizeAndReturnJson(...args));
     }
   }
 
+  /**
+   * @returns list of all different keys
+   */
   export function GetDifferentKeys(map_1: Map<string, defined>, map_2: Map<string, defined>) {
     const keys = new Map<string, boolean>();
     for (const [key] of map_1) {
@@ -234,6 +317,9 @@ export namespace DebuggingTools {
     return value;
   }
 
+  /**
+   * prints the map, useful to debug in the RobloxPlayer Console (F9)
+   */
   export function PrintMap(map: DefinedMap, scope: number = 0, exceptions: Array<DefinedMap> = []) {
     const brackets_space = "\t".rep(scope);
     //prints { if scope is 0
@@ -280,9 +366,5 @@ export namespace DebuggingTools {
       print(`${scope_space}[${key}] = ${text}`);
     }
     print(`${brackets_space}}`);
-  }
-
-  export function TransformType<T>(value: unknown) {
-    return value as T;
   }
 }

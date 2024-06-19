@@ -1,3 +1,5 @@
+import { ArrayTools } from "./array_tools";
+
 //!native
 export type AnyArray<T = any> = Array<T> | ReadonlyArray<T>;
 export type AnyMap<K = any, V = any> = Map<K, V> | ReadonlyMap<K, V>;
@@ -136,9 +138,19 @@ export namespace TableTools {
 
     return filtered_map
   }
-  export function GetFirstKey<K, V>(map: Map<K, V>) {
+
+  /**@returns first element from the map [key, value] */
+  export function GetFirst<K, V>(map: Map<K, V>) {
     for (const [key, value] of map) {
       return $tuple(key, value);
     }
+  }
+
+  export function GetRandomKey<T extends DefinedMap>(map: T) {
+    return ArrayTools.GetRandomElement(TableTools.GetKeys(map));
+  }
+
+  export function GetRandomValue<T extends DefinedMap>(map: T) {
+    return ArrayTools.GetRandomElement(TableTools.GetValues(map));
   }
 }

@@ -2,6 +2,11 @@
 //!optimize 2
 export namespace ArrayTools {
   const random = new Random();
+  /**
+   * 
+   * @param array 
+   * @returns shuffled copy of array
+   */
   export function Shuffle<T extends defined>(array: readonly T[]) {
     const array_size = array.size();
     const shuffled_array = new Array<T>(array_size);
@@ -78,6 +83,12 @@ export namespace ArrayTools {
     array.push(value);
   }
 
+  /**
+   * interts elements at position
+   * @param array 
+   * @param elements 
+   * @param position 
+   */
   export function InsertElements<T extends defined>(array: Array<T>, elements: Array<T>, position: number = array.size()) {
     for (const element of elements) {
       array.insert(position++, element);
@@ -85,6 +96,10 @@ export namespace ArrayTools {
     return array;
   }
 
+  /**
+   * @param arrays 
+   * @returns array that contains all elements from arrays
+   */
   export function JoinArrays<T extends defined>(arrays: readonly T[][]) {
     return arrays.reduce((combined_array, array) => {
       return [...combined_array, ...array]
@@ -162,6 +177,10 @@ export namespace ArrayTools {
     return true;
   }
 
+  /**
+   * loops in the opposite direction
+   * equivalent to for(let i = array.size() - 1; i >= 0, i--)
+   */
   export function ReverseLoop<T extends defined>(array: readonly T[], callback: (value: T, index: number, array: readonly T[]) => void) {
     for (const i of $range(array.size() - 1, 0, -1)) {
       const value = array[i];
@@ -169,6 +188,7 @@ export namespace ArrayTools {
     }
   }
 
+  /**swaps elements in the table by indexes */
   export function SwapIndexes<T extends defined>(array: T[], index_0: number, index_1: number) {
     const element_0 = array[index_0];
     const element_1 = array[index_1];
@@ -176,6 +196,10 @@ export namespace ArrayTools {
     array[index_1] = element_0;
   }
 
+  /**
+   * @param array 
+   * @returns reversed copy of array
+   */
   export function Reverse<T extends defined>(array: readonly T[]) {
     const reversed_array = new Array<T>(array.size());
     ReverseLoop(array, (value, index) => reversed_array.push(value));
@@ -183,9 +207,10 @@ export namespace ArrayTools {
   }
 
   /**
-   * indexes the array and warps the index
+   * indexes the array and wraps the index
+   * equivalent to array[index % array.size()]
    */
-  export function WarpIndex<T>(array: readonly T[], index: number) {
+  export function WrapIndex<T>(array: readonly T[], index: number) {
     const size = array.size();
     return array[size !== 0 ? index % size : 0];
   }

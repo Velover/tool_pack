@@ -2,9 +2,7 @@ import { Players } from "@rbxts/services";
 import { FunctionTools } from "./function_tools";
 
 
-declare global {
-  type InstancePropertiesList<T extends Instance> = { [key in keyof WritableInstanceProperties<T>]?: WritableInstanceProperties<T>[key] };
-}
+export type InstancePropertiesList<T extends Instance> = { [key in keyof WritableInstanceProperties<T>]?: WritableInstanceProperties<T>[key] };
 export namespace InstanceTools {
   const random = new Random();
 
@@ -148,7 +146,14 @@ export namespace InstanceTools {
     return position.add(half_size.mul(unit_vector));
   }
 
-
+  /**
+   * creates the item for the server and client, has to be called from the both sides
+   * @param name 
+   * @param parent 
+   * @param class_name 
+   * @param properties 
+   * @returns 
+   */
   export function DefineItem<T extends keyof CreatableInstances>(name: string, parent: Instance, class_name: T, properties: InstancePropertiesList<CreatableInstances[T]>) {
     const instance = FunctionTools.ExecuteOnServerAndClient(() => {
       assert(parent.FindFirstChild(name) === undefined, `Instance with name ${name} is already in ${parent.GetFullName()}`);

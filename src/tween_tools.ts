@@ -4,6 +4,15 @@ import { MathTools } from "./math_tools";
 import { StringTools } from "./string_tools";
 
 export namespace TweenTools {
+  /**
+   * 
+   * @param instance 
+   * @param tween_info 
+   * @param properties properties to tween
+   * @param play autoplay
+   * @param await auto tween.Completed.Wait();
+   * @returns 
+   */
   export function CreateTween<T extends Instance>(
     instance: T, tween_info: TweenInfo, properties: Partial<ExtractMembers<T, Tweenable>>, play: boolean = true, await: boolean = true) {
     const tween = TweenService.Create(instance, tween_info, properties);
@@ -16,6 +25,7 @@ export namespace TweenTools {
   }
   const Lerp = MathTools.Lerp;
   export type CustomTweenable = Tweenable | string
+  /**lerps the value with alpha */
   export function LerpValue<T extends CustomTweenable>(start_value: T, target_value: T, alpha: number): T {
     const value_type = typeOf(start_value) as keyof CustomTweenable;
     if (value_type === "number") {
@@ -65,6 +75,15 @@ export namespace TweenTools {
     return value_0.add(new Vector2int16(direction.X * alpha, direction.Y * alpha)) as T;
   }
 
+  /**
+   * tweens value with EasingStyle / EasingDirection
+   * @param start_value 
+   * @param target_value 
+   * @param alpha 
+   * @param easing_style 
+   * @param easing_direction 
+   * @returns 
+   */
   export function TweenValue<T extends CustomTweenable>(start_value: T, target_value: T, alpha: number,
     easing_style: CastsToEnum<Enum.EasingStyle> = Enum.EasingStyle.Sine,
     easing_direction: CastsToEnum<Enum.EasingDirection> = Enum.EasingDirection.In

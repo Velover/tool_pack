@@ -4,12 +4,22 @@ export namespace Vector3Tools {
   const clamp = math.clamp;
   const min = math.min;
 
-  //clamps the vector between the numbers;
+  /**
+   * clamps the vector between the numbers
+  */
   export function Clamp(vector: Vector3, min: number, max: number) {
     return new Vector3(
       clamp(vector.X, min, max),
       clamp(vector.Y, min, max),
       clamp(vector.Z, min, max)
+    )
+  }
+
+  export function ClampWithVector(vector: Vector3, min_vector: Vector3, max_vector: Vector3) {
+    return new Vector3(
+      math.clamp(vector.X, min_vector.X, max_vector.X),
+      math.clamp(vector.Y, min_vector.Y, max_vector.Y),
+      math.clamp(vector.Z, min_vector.Z, max_vector.Z)
     )
   }
 
@@ -27,7 +37,6 @@ export namespace Vector3Tools {
       //sets the magnitude to clamped value;
       vector = vector.Unit.mul(clamp(vector.Magnitude, min, max))
     }
-
     return vector;
   }
 

@@ -36,6 +36,13 @@ export namespace DetectingTools {
     return part_corners;
   }
 
+  /**
+   * Gets point under the player character (raycast)
+   * @param player 
+   * @param max_depth 
+   * @param filter_not_anchored 
+   * @returns 
+   */
   export function GetPointUnderThePlayer(player: Player, max_depth: number, filter_not_anchored: boolean = true) {
     if (player.Character === undefined) return;
     const player_position = player.Character.GetPivot().Position;
@@ -94,6 +101,14 @@ export namespace DetectingTools {
 
     return local_points;
   }
+
+  /**
+   * checks if the part insode of the zone part
+   * @param zone 
+   * @param part 
+   * @param fully_inside 
+   * @returns 
+   */
   export function IsPartInside(zone: BasePart, part: BasePart, fully_inside: boolean = true) {
     const zone_half_size = zone.Size.mul(.5);
     //takes the corners of the part
@@ -140,6 +155,12 @@ export namespace DetectingTools {
     return ((x_2 <= y_1) && (x_1 <= y_2));
   }
 
+  /**
+   * checks if the position is insode of the part
+   * @param zone 
+   * @param point 
+   * @returns 
+   */
   export function IsPointInside(zone: BasePart, point: Vector3) {
     const offset = zone.CFrame.PointToObjectSpace(point);
     const half_size = zone.Size.mul(.5);
@@ -192,6 +213,7 @@ export namespace DetectingTools {
     return filtered_points;
   }
 
+  /**WIP */
   export function IsOnTheScreen(camera: Camera, part: BasePart, fully_inside: boolean = false, samples_amount: number = -1) {
     if (!fully_inside) {
       if (IsPointInside(part, camera.CFrame.Position)) {

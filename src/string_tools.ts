@@ -8,7 +8,7 @@ export namespace StringTools {
   const characters = string.split("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", "");
   const max_itteractions = 100;
   /**generates a unique string id with requested length */
-  export function GenerateStringId(length: number, exceptions: Array<string>) {
+  export function GenerateStringId(length: number, exceptions: Array<string> = []) {
     let id = "";
     let itteration = 0;
     do {

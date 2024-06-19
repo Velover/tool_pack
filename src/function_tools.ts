@@ -42,6 +42,12 @@ export namespace FunctionTools {
     return item;
   }
 
+  /**
+   * creates the function that accepts optional arguments, but they are getting filled out by default parameters
+   * @param default_parameters 
+   * @param callback 
+   * @returns 
+   */
   export function CreateFunctionWithOptionalArguments<T extends {}, ReturnType>(default_parameters: MakeOnlyOptionalKeys<T>, callback: (data: T) => ReturnType) {
     return (data: T): GetReturnType<typeof callback> => {
       //applies all optional values
@@ -60,6 +66,29 @@ export namespace FunctionTools {
    * @param possible_answers possible answers with coresponding indexes to variants
    * @param default_value if variant wasnt found, will return a default value
    * @returns if value is a variant, will return the answer with the same index as a variant
+   * 
+   * ```ts
+   * 
+   * SwitchValueIfEquals(
+   * value,
+   * [1, 2, 3],
+   * [3, 2, 1], 
+   * 0)
+   * 
+   * //equivalent to 
+   * switch(value){
+   * case(1):{
+   * return 3;
+   * }
+   * case(2):{
+   * return 2;
+   * }
+   * case(3):{
+   * return 1}
+   * }
+   * default:{
+   * return: 0}
+   * ```
    */
   export function SwitchValueIfEquals<T, Q>(value: T, possible_variants: T[], possible_answers: Q[], default_value: Q) {
     for (const i of $range(0, possible_answers.size() - 1)) {

@@ -5,19 +5,24 @@ import { MathTools } from "./math_tools";
 //!optimize 2
 export namespace ColorTools {
   const floor = math.floor
+  /**packs color in binary form 32bit */
   export function PackColor(r: number, g: number, b: number, a: number) {
     return (r * 255) | ((g * 255) << 8) | ((b * 255) << 16) | ((a * 255) << 24);
   }
+
+  /**packs color in binary form 32bit */
 
   export function PackColor3(color: Color3) {
     return PackColor(color.R, color.G, color.B, 1)
   }
 
+  /**unpacks color from binary*/
   export function UnpackColor3(packed_color: number) {
     const [r, g, b, a] = UnpackColor(packed_color);
     return new Color3(r, g, b);
   }
 
+  /**unpacks color from binary*/
   export function UnpackColor(packed_color: number) {
     const r = (packed_color & 0xff) / 255;
     const g = ((packed_color & 0xff00) >>> 8) / 255;
@@ -50,14 +55,14 @@ export namespace ColorTools {
     let b = ConvertValueToLinearColorSpace(color.B);
     return $tuple(r, g, b);
   }
-  function GetRelativeLumunance(color: Color3) {
+  export function GetRelativeLuminance(color: Color3) {
     let [r, g, b] = ConvertToLinearColorSpace(color);
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   }
 
   export function CalculateContrastRatio(color_1: Color3, color_2: Color3) {
-    const luminance_1 = GetRelativeLumunance(color_1);
-    const luminance_2 = GetRelativeLumunance(color_2);
+    const luminance_1 = GetRelativeLuminance(color_1);
+    const luminance_2 = GetRelativeLuminance(color_2);
 
     const max_luminance = max(luminance_1, luminance_2);
     const min_luminance = min(luminance_1, luminance_2);
@@ -68,16 +73,26 @@ export namespace ColorTools {
   const black = new Color3(0, 0, 0);
   const white = new Color3(1, 1, 1);
 
-  export function GetSimpleContrastColor(color: Color3) {
-    const luminance = GetRelativeLumunance(color);
-
-    if (luminance <= .5) return white;
-    return black;
+  /**
+   * @returns if the colors luminance if greater than .6
+   */
+  export function IsBright(color: Color3) {
+    return GetRelativeLuminance(color) >= .6;
   }
 
+  /**
+   * @returns black or white
+   */
+  export function GetSimpleContrastColor(color: Color3) {
+    return IsBright(color) ? black : white
+  }
+
+  /**
+   * @returns contrast rgb color
+   */
   export function GetContrastColor(color: Color3) {
     const [r, g, b] = ConvertToLinearColorSpace(color);
-    const luminance = GetRelativeLumunance(color);
+    const luminance = GetRelativeLuminance(color);
 
     const saturation = (max(r, g, b) - min(r, g, b)) / max(r, g, b);
     const alpha = .5 * (2 * r - g - b);

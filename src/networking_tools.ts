@@ -1,5 +1,4 @@
-import { Players, ReplicatedStorage } from "@rbxts/services";
-import { FunctionTools } from "./function_tools";
+import { Players } from "@rbxts/services";
 import { InstanceTools } from "./instance_tools";
 
 export namespace NetworkingTools {
@@ -30,49 +29,22 @@ export namespace NetworkingTools {
     });
   }
 
-  //creates a network folder for the client and the server to 
-  const network_folder = FunctionTools.ExecuteOnServerAndClient(() => {
-    const folder = InstanceTools.Create("Folder", {
-      Name: "network__",
-      Parent: ReplicatedStorage
-    })
-    return folder
-  }, () => {
-    const folder = <Folder>ReplicatedStorage.WaitForChild("network__");
-    return folder;
-  });
-
-  export function DefineRemoteEvent<T extends Callback = Callback>(name: string, parent: Instance = network_folder) {
-    const remote = FunctionTools.ExecuteOnServerAndClient(() => {
-      //to ensure that there's no instances with the same name as remote event
-      assert(parent.FindFirstChild(name) === undefined, `Failed to create RemoteEvent. Instance with name: ${name} already exist in ${parent.GetFullName()}`)
-      const remote_event = InstanceTools.Create("RemoteEvent", {
-        Name: name,
-        Parent: network_folder
-      })
-      return remote_event;
-    }, () => {
-      const remote_event = <RemoteEvent>network_folder.WaitForChild(name);
-      return remote_event;
-    })
-
-    return remote as RemoteEvent<T>;
+  function GetOrCreateNetworkFolder() {
+    const folder_name = "network__";
+    return InstanceTools.GetOrCreate(folder_name, script, "Folder", {});
   }
 
-  export function DefineRemoteFunction<T extends Callback = Callback>(name: string, parent: Instance = network_folder) {
-    const remote = FunctionTools.ExecuteOnServerAndClient(() => {
-      //to ensure that there's no instances with the same name as remote event
-      assert(parent.FindFirstChild(name) === undefined, `Failed to create RemoteFunction. Instance with name: ${name} already exist in ${parent.GetFullName()}`)
-      const remote_function = InstanceTools.Create("RemoteFunction", {
-        Name: name,
-        Parent: parent
-      })
-      return remote_function;
-    }, () => {
-      const remote_function = <RemoteFunction>parent.WaitForChild(name);
-      return remote_function;
-    })
+  /**
+   * creates the remote event for server and client, has to be executed from both sides
+   * @param name name of remote event
+   * @param parent parent where the remote event is located
+   * @returns remote event
+   */
+  export function DefineRemoteEvent<T extends Callback = Callback>(name: string, parent: Instance = GetOrCreateNetworkFolder()) {
+    return <RemoteEvent<T>>InstanceTools.DefineItem(name, parent, "RemoteEvent", {});
+  }
 
-    return remote as RemoteFunction<T>;
+  export function DefineRemoteFunction<T extends Callback = Callback>(name: string, parent: Instance = GetOrCreateNetworkFolder()) {
+    return <RemoteFunction<T>>InstanceTools.DefineItem(name, parent, "RemoteFunction", {});
   }
 }

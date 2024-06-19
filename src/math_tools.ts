@@ -1,16 +1,18 @@
 //!native
 //!optimize 2
 export namespace MathTools {
-  const clamp = math.clamp;
   const max = math.max;
   const min = math.min;
   const sign = math.sign;
   const abs = math.abs;
   const ceil = math.ceil;
-  const floor = math.floor;
   const pow = math.pow;
   const pi = math.pi;
   const tau = 2 * math.pi;
+  /**
+   * @param n 
+   * @returns n!
+   */
   export function Factor(n: number) {
     n = math.floor(n);
     if (n === 0 || n === 1) return 1;
@@ -23,24 +25,41 @@ export namespace MathTools {
   export function Lerp(start: number, target: number, alpha: number) {
     return start + (target - start) * alpha;
   }
-  //2 - 10 2 = 4
-  //8 - 10 4 = 10
-  //10 - 8 4 = 8
+
+  /**
+   * goes in the direction of the target with step, will never overshoot the target
+   * 
+   * ```e.g start = 5, target = 6, step = 2    direction = 6 - 5 = 1    returns 5 + math.min(1, 2) = 6```
+   * 
+   * ```e.g start = 6, target = 4, step = 1    direction = 4 - 6 = -2    returns 6 - math.min(math.abs(-2), 1) = 5```
+   * 
+   * sugar for linear spring  
+   * ```ts
+   * current = LerpWith(current, target, speed * dt)
+   * ```
+   * 
+   * @param start 
+   * @param target 
+   * @param step 
+   * @returns 
+   */
   export function LerpWith(start: number, target: number, step: number) {
     const difference = target - start;
     //calculating min difference towards target;
     step = sign(difference) * min(step, abs(difference));
     return start + step;
   }
-  //sets angle in range [-pi, pi]
+
+  /**wraps angle to range [-pi, pi]*/
   export function NormalizeAngle(alpha: number) {
     //if bigger than pi, substracts tau * sign(angle);
     //if less than pi, adds tau;
     return abs(alpha) < pi ? alpha : -sign(alpha) * tau + alpha
   }
 
-  //lerpes the angle with fixed step
-  //angle [-pi, pi]
+  /**lerpes the angle with fixed step
+   * angle [-pi, pi]
+  */
   export function LerpAngleWith(start: number, target: number, step: number) {
     if (start === target) return target;
     let angle = target - start;
@@ -57,7 +76,7 @@ export namespace MathTools {
     return NormalizeAngle(new_angle);
   }
 
-  //maps the value from 1 range to other
+  /**maps the value from 1 range to other*/
   export function Map(value: number, input_min: number, input_max: number, output_min: number, output_max: number, clamp?: boolean) {
     const difference_input = input_max - input_min;
     const difference_output = output_max - output_min;
@@ -75,10 +94,11 @@ export namespace MathTools {
     return output
   }
 
-  //wraps number in range 
-  //2, 2, 0, 2 => 2
-  //0, 4, 0, 3 => 1
-  //0 + 4 = 4 - (3 - 0) => 1
+  /**wraps number in range 
+   * 2, 2, 0, 2 => 2
+   * 0, 4, 0, 3 => 1
+   * 0 + 4 = 4 - (3 - 0) => 1 
+  */
   export function WrapAdd(value: number, step: number, min_value: number, max_value: number) {
     let offset_to_min_value = (value + step) - min_value;
 
@@ -101,13 +121,17 @@ export namespace MathTools {
 
   // }
 
-  //unit number [0, 1]
-  //bias [-inf, 1];
-  //bias -1 -larger numbers are very frequent
-  //bias 1 -smaller numbers are very frequent
-  //bias power of the curve
-  //gets bigger numbers that are less frequent
-  //https://www.youtube.com/watch?v=lctXaT9pxA0&t=454s
+  /**
+   * 
+   * unit number [0, 1]
+   * bias [-inf, 1];
+   * bias -1 -larger numbers are very frequent
+   * bias 1 -smaller numbers are very frequent
+   * bias power of the curve
+   * gets bigger numbers that are less frequent
+  *@see https://www.youtube.com/watch?v=lctXaT9pxA0&t=454s&ab_channel=SebastianLague
+     */
+
   export function BiasFunction(unit_number: number, bias: number) {
     //pow works better than ^
     const k = pow(1 - bias, 3);
