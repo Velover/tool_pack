@@ -1,7 +1,6 @@
 {
   "name": "@rbxts/tool_pack",
   "version": "1.1.0",
-  "description": "",
   "main": "out/init.lua",
   "scripts": {
     "build": "rbxtsc",
@@ -10,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Velover/tool_pack/tree/master"
+    "url": "git+https://github.com/Velover/tool_pack.git#master"
   },
   "keywords": [],
   "author": "Catargo",
@@ -38,5 +37,10 @@
   },
   "dependencies": {
     "@rbxts/services": "^1.5.4"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/Velover/tool_pack/issues"
+  },
+  "homepage": "https://github.com/Velover/tool_pack/tree/master#readme",
+  "description": ""
 }
