@@ -1,6 +1,6 @@
 {
   "name": "@rbxts/tool_pack",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "main": "out/init.lua",
   "scripts": {
     "build": "rbxtsc",
@@ -42,5 +42,8 @@
     "url": "https://github.com/Velover/tool_pack/issues"
   },
   "homepage": "https://github.com/Velover/tool_pack/tree/master#readme",
-  "description": ""
+  "description": "Documentation WIP\r For now you can read from the implementation",
+  "directories": {
+    "doc": "docs"
+  }
 }

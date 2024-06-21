@@ -7,42 +7,53 @@ export class CallbackTimer {
       timeout_callback: () => void,
       yield_after_call: boolean,
       terminate_old: boolean
-    }>) {
+    }>
+  ) {
     const timer = new CallbackTimer();
     const { wait_time, one_shot, autostart, timeout_callback, yield_after_call, terminate_old } = callback(timer);
-    if (wait_time !== undefined) timer.wait_time_ = wait_time;
-    if (one_shot !== undefined) timer.one_shot_ = one_shot;
+    if (wait_time !== undefined) timer.wait_time = wait_time;
+    if (one_shot !== undefined) timer.one_shot = one_shot;
     if (timeout_callback !== undefined) timer.SetCallback(timeout_callback);
-    if (yield_after_call !== undefined) timer.yield_after_call_ = yield_after_call;
-    if (terminate_old !== undefined) timer.terminate_old_ = terminate_old;
+    if (yield_after_call !== undefined) timer.yield_after_call = yield_after_call;
+    if (terminate_old !== undefined) timer.terminate_old = terminate_old;
     if (autostart) timer.Start();
 
     return timer;
   }
-  public wait_time_ = 1;
+  public wait_time = 1;
   /**dont restart the timer til the callback is finished. 
    * 
    *Applied only if one_shot is false
    */
-  public yield_after_call_ = false;
+  public yield_after_call = false;
   /**stops the previous callback if it's still running. 
    * 
    *Applied only if one_shot is false
   */
-  public terminate_old_ = false;
+  public terminate_old = false;
   private start_time_ = 0;
 
-  public one_shot_ = true;
+  /**
+   * if one_shot if true, the timer will work only once and will stop
+   * if false timer works until the manual Stop()
+   * default is true
+   */
+  public one_shot = true;
 
   private stopped_ = true;
+  IsStopped() { return this.stopped_; }
 
   private thread_?: thread;
   private callback_thread_?: thread;
   private callback_: () => void = () => { };
+  SetCallback(callback: () => void) {
+    this.callback_ = callback;
+    return this;
+  }
 
   Start(time_sec = -1) {
     if (time_sec > 0) {
-      this.wait_time_ = time_sec;
+      this.wait_time = time_sec;
     }
     //stops the existing timer
     this.Stop();
@@ -60,21 +71,40 @@ export class CallbackTimer {
   }
 
   private Cycle() {
-    while (task.wait(this.wait_time_)) {
-      if (this.terminate_old_) this.TerminateCallbackThread();
-      if (this.yield_after_call_) this.callback_();
+    while (task.wait(this.wait_time)) {
+      if (this.terminate_old) this.TerminateCallbackThread();
+      if (this.yield_after_call) this.callback_();
       else this.callback_thread_ = task.spawn(this.callback_);
-      if (this.one_shot_) break;
+      if (this.one_shot) break;
     }
     //cannot stop the thread from inside;
     this.stopped_ = true;
   }
 
+  /**
+   * way to stop the timer in timer callback
+   * @param terminate_callback whether to stop running callback defaults to false
+   * if called from the timer callback should be always false, its better to handle termination within the callback with return statement
+   * 
+   * ```ts
+   * function TimerFunction()
+   * ...
+   *  if(something){
+   *   timer.StopInThread();
+   *   return;
+   *  }
+   * }
+   * ```
+   */
   StopInThread(terminate_callback: boolean = false) {
     this.stopped_ = true;
     if (terminate_callback) this.TerminateCallbackThread();
   }
 
+  /**
+   * should not be called from the callback in the timer, can cause error!
+   * @param terminate_callback 
+   */
   Stop(terminate_callback: boolean = false) {
     if (this.thread_ !== undefined) {
       task.cancel(this.thread_);
@@ -85,17 +115,9 @@ export class CallbackTimer {
     this.stopped_ = true;
   }
 
-  SetCallback(callback: () => void) {
-    this.callback_ = callback;
-  }
-
-  IsStopped() {
-    return this.stopped_;
-  }
-
   GetTimeLeft() {
     return math.max(
-      this.wait_time_ - (os.clock() - this.start_time_)
+      this.wait_time - (os.clock() - this.start_time_)
       , 0);
   }
 
