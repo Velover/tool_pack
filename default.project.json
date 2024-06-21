@@ -1,0 +1,6 @@
+{
+  "name": "tool_pack",
+  "tree":{
+    "$path": "out"
+  }
+}
