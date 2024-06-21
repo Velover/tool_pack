@@ -1,6 +1,6 @@
 {
   "name": "@rbxts/tool_pack",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "main": "out/init.lua",
   "scripts": {
     "build": "rbxtsc",
@@ -17,6 +17,7 @@
   "types": "out/index.d.ts",
   "files": [
     "out",
+    "default.project.json",
     "!**/*.tsbuildinfo"
   ],
   "publishConfig": {
@@ -33,7 +34,7 @@
     "eslint-plugin-roblox-ts": "^0.0.36",
     "prettier": "^3.3.2",
     "roblox-ts": "^2.3.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.2"
   },
   "dependencies": {
     "@rbxts/services": "^1.5.4"
