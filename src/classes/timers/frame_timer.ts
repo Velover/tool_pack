@@ -1,76 +1,93 @@
-import { RunService } from "@rbxts/services";
+import { RunService, TweenService } from "@rbxts/services";
 import { TweenTools } from "../../tween_tools";
 
 type FrameTimerCallback = (time_passed: number, delta_time: number) => void
-export class FrameTimer {
-  /**
-   * @param GetConnection will return the connection, but ONLY USE IN update_callback or timeout_callback
-   */
-  static Create(
-    callback: (timer: FrameTimer, GetConnection: () => RBXScriptConnection | undefined) =>
-      { wait_time?: number, one_shot?: boolean, autostart?: boolean, update_callback?: FrameTimerCallback, timeout_callback?: () => void }
-  ) {
-    const timer = new FrameTimer();
-    let connection: RBXScriptConnection | undefined
-    const { wait_time, one_shot, autostart, update_callback, timeout_callback } = callback(timer, () => connection);
-    if (wait_time !== undefined) timer.wait_time = wait_time;
-    if (one_shot !== undefined) timer.one_shot = one_shot;
-    if (update_callback) timer.SetCallback(update_callback);
-    if (timeout_callback) connection = timer.on_time_out.Connect(timeout_callback);
-    if (autostart) timer.Start();
-    return $tuple(timer, connection);
+type SteppingEvent = RBXScriptSignal<(delta_time: number) => void>
+class Builder {
+  static Create() {
+    return new FrameTimer.Builder();
   }
 
-  static CreateFast(
-    callback: (timer: FrameTimer) =>
-      { wait_time: number, update_callback: FrameTimerCallback, yields?: boolean, destroy_after_ended?: boolean }
-  ) {
-    const timer = new FrameTimer();
-    const { wait_time, update_callback, yields, destroy_after_ended = true } = callback(timer);
-    timer.SetCallback(update_callback);
-    if (destroy_after_ended) timer.on_time_out.Once(() => timer.Destroy());
-    timer.wait_time = wait_time;
-    timer.Start();
-    if (yields ?? true) task.wait(wait_time);
-    if (!destroy_after_ended) return timer;
+  /**@hidden */;
+  timer_: FrameTimer = new FrameTimer();
+  /**@hidden */
+  auto_start_ = false;
+  WithWaitTime(value: number) {
+    this.timer_.wait_time = value;
+    return this;
   }
+  WithOneShot(value: boolean) {
+    this.timer_.one_shot = value;
+    return this;
+  }
+  WithUpdateCallback(callback: FrameTimerCallback) {
+    this.timer_.SetUpdateCallback(callback);
+    return this;
+  }
+  WithTimeOutCallback(callback: (connection?: RBXScriptConnection) => void, with_connection?: (connection: RBXScriptConnection) => void) {
+    const connection = this.timer_.on_time_out.Connect(() => callback(connection));
+    with_connection?.(connection);
+    return this;
+  }
+  WithAutoStart() {
+    this.auto_start_ = true;
+    return this;
+  }
+  WithSteppingMethod(stepping_event: SteppingEvent) {
+    this.timer_.SetSteppingEvent(stepping_event)
+  }
+  Build() {
+    if (this.auto_start_) this.timer_.Start();
+    return this.timer_;
+  }
+}
+/**the constructor will be private
+* @see https://discord.com/channels/476080952636997633/1253704157744074822
+*/
+export class FrameTimer {
+  static Builder = Builder;
 
   static CreateTween<T extends Tweenable>(
     start_value: T, target_value: T, wait_time: number, set_function: (new_value: T) => void,
     auto_start: boolean = true,
-    easing_style?: Enum.EasingStyle, easing_direction?: Enum.EasingDirection
+    easing_style: Enum.EasingStyle = Enum.EasingStyle.Sine,
+    easing_direction: Enum.EasingDirection = Enum.EasingDirection.In
   ) {
-    //TODO use Create Custom Tween
-    const timer = new FrameTimer();
-    timer.one_shot = true;
-    timer.wait_time = wait_time;
-    timer.SetCallback((time_passed) => {
-      const alpha = time_passed / wait_time;
-      const new_value = TweenTools.TweenValue(start_value, target_value, alpha, easing_style, easing_direction);
-      set_function(new_value);
-    })
-    if (auto_start) timer.Start();
-    return timer;
+    return FrameTimer.CreateCustomTween(start_value, target_value, wait_time, () => {
+      return (alpha) => TweenService.GetValue(alpha, easing_style, easing_direction);
+    }, set_function, auto_start);
   }
 
+  /**
+   * 
+   * @param start_value 
+   * @param target_value 
+   * @param wait_time 
+   * @param create_new_alpha_generator creates a callback that will provide new alpha from existing like TweenService.GetValue
+   * @param set_function 
+   * @param auto_start 
+   * @returns 
+   */
   static CreateCustomTween<T extends Tweenable>(
     start_value: T, target_value: T, wait_time: number,
-    create_tweener: () => (alpha: number, delta_time: number, time_passed: number, wait_time: number) => number,
+    create_new_alpha_generator: () => (alpha: number, delta_time: number, time_passed: number, wait_time: number) => number,
     set_function: (new_value: T) => void,
     auto_start: boolean = true
   ) {
     const timer = new FrameTimer();
     timer.wait_time = wait_time;
-    const tweener = create_tweener();
-    timer.SetCallback((time_passed, delta_time) => {
+    const alpha_generator = create_new_alpha_generator();
+    timer.SetUpdateCallback((time_passed, delta_time) => {
       const alpha = time_passed / wait_time;
-      const new_alpha = tweener(alpha, delta_time, time_passed, wait_time);
+      const new_alpha = alpha_generator(alpha, delta_time, time_passed, wait_time);
       const new_value = TweenTools.LerpValue(start_value, target_value, new_alpha)
       set_function(new_value);
     })
     if (auto_start) timer.Start();
     return timer;
   }
+
+
 
   public wait_time = 1;
   private time_left_ = 0;
@@ -96,21 +113,26 @@ export class FrameTimer {
 
   private update_connection_?: RBXScriptConnection
 
-  private callback_: FrameTimerCallback = () => { }
-  private stepping_event_: RBXScriptSignal<(delta_time: number) => void> = RunService.Heartbeat;
-  SetSteppingEvent(stepping_event: RBXScriptSignal<(delta_time: number) => void>) {
-    this.stepping_event_ = stepping_event;
-    return this;
-  }
-
+  private update_callback_: FrameTimerCallback = () => { }
   /**
    * @param time_passed time passed since the start of the timer
    * @param callback callback that will be executed each frame
    */
-  SetCallback(callback: FrameTimerCallback) {
-    this.callback_ = callback;
+  SetUpdateCallback(callback: FrameTimerCallback) {
+    this.update_callback_ = callback;
     return this;
   }
+
+  /**
+   * update event, defaults to RunService.Heartbeat
+   */
+  private stepping_event_: SteppingEvent = RunService.Heartbeat;
+  SetSteppingEvent(stepping_event: SteppingEvent) {
+    this.stepping_event_ = stepping_event;
+    return this;
+  }
+
+  // private constructor() { };
 
   Start(time_sec = -1) {
     if (time_sec > 0) {
@@ -148,7 +170,7 @@ export class FrameTimer {
     this.time_left_ -= delta_time;
     //clamps to wait time
     const time_passed = math.min(this.initialized_wait_time_ - this.time_left_, this.wait_time);
-    this.callback_(time_passed, delta_time);
+    this.update_callback_(time_passed, delta_time);
     if (this.time_left_ > 0) return
 
     this.time_out_event_.Fire();

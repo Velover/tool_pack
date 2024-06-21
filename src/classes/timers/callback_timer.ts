@@ -1,25 +1,45 @@
-export class CallbackTimer {
-  static Create(callback: (timer: CallbackTimer) =>
-    Partial<{
-      wait_time: number,
-      one_shot: boolean,
-      autostart: boolean,
-      timeout_callback: () => void,
-      yield_after_call: boolean,
-      terminate_old: boolean
-    }>
-  ) {
-    const timer = new CallbackTimer();
-    const { wait_time, one_shot, autostart, timeout_callback, yield_after_call, terminate_old } = callback(timer);
-    if (wait_time !== undefined) timer.wait_time = wait_time;
-    if (one_shot !== undefined) timer.one_shot = one_shot;
-    if (timeout_callback !== undefined) timer.SetCallback(timeout_callback);
-    if (yield_after_call !== undefined) timer.yield_after_call = yield_after_call;
-    if (terminate_old !== undefined) timer.terminate_old = terminate_old;
-    if (autostart) timer.Start();
-
-    return timer;
+class Builder {
+  /**@hidden */
+  timer_: CallbackTimer = new CallbackTimer();
+  /**@hidden */
+  auto_start_ = false;
+  WithWaitTime(value: number) {
+    this.timer_.wait_time = value;
+    return this;
   }
+  WithOneShot(value: boolean) {
+    this.timer_.one_shot = value;
+    return this;
+  }
+  WithTimeOutCallback(callback: () => void) {
+    this.timer_.SetCallback(callback);
+    return this;
+  }
+  WithYieldAfterCall(value: boolean) {
+    this.timer_.yield_after_call = value;
+    return this;
+  }
+  WithTerminateOld(value: boolean) {
+    this.timer_.terminate_old = value;
+    return this;
+  }
+  WithAutoStart() {
+    this.auto_start_ = true;
+    return this;
+  }
+  Build() {
+    if (this.auto_start_) this.timer_.Start();
+    return this.timer_;
+  }
+}
+
+/**the constructor will be private
+* @see https://discord.com/channels/476080952636997633/1253704157744074822
+*/
+export class CallbackTimer {
+  static Builder = Builder;
+
+
   public wait_time = 1;
   /**dont restart the timer til the callback is finished. 
    * 
@@ -50,6 +70,8 @@ export class CallbackTimer {
     this.callback_ = callback;
     return this;
   }
+
+  // private constructor() { };
 
   Start(time_sec = -1) {
     if (time_sec > 0) {

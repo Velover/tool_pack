@@ -1,18 +1,44 @@
 import { RunService } from "@rbxts/services";
 
-const max = math.max;
-export class Timer {
-  static Create(callback: (timer: Timer, GetConnection: () => RBXScriptConnection | undefined) =>
-    { wait_time?: number, one_shot?: boolean, autostart?: boolean, timeout_callback?: () => void }) {
-    const timer = new Timer();
-    let connection: RBXScriptConnection | undefined
-    const { wait_time, one_shot, autostart, timeout_callback } = callback(timer, () => connection);
-    if (wait_time !== undefined) timer.wait_time = wait_time;
-    if (one_shot !== undefined) timer.one_shot = one_shot;
-    if (timeout_callback) connection = timer.on_time_out.Connect(timeout_callback);
-    if (autostart) timer.Start();
-    return $tuple(timer, connection);
+class Builder {
+  //shortcut
+  static Create() {
+    return new Timer.Builder();
   }
+
+  /**@hidden */
+  timer_: Timer = new Timer();
+  /**@hidden */
+  auto_start_ = false;
+  WithWaitTime(value: number) {
+    this.timer_.wait_time = value;
+    return this;
+  }
+  WithOneShot(value: boolean) {
+    this.timer_.one_shot = value;
+    return this;
+  }
+  WithTimeOutCallback(callback: (connection?: RBXScriptConnection) => void, with_connection?: (connection: RBXScriptConnection) => void) {
+    const connection = this.timer_.on_time_out.Connect(() => callback(connection));
+    with_connection?.(connection)
+    return this;
+  }
+  WithAutoStart() {
+    this.auto_start_ = true;
+    return this
+  }
+  Build() {
+    if (this.auto_start_) this.timer_.Start();
+    return this.timer_;
+  }
+};
+
+/**the constructor will be private
+* @see https://discord.com/channels/476080952636997633/1253704157744074822
+*/
+export class Timer {
+  static Builder = Builder;
+
 
   public wait_time = 1;
   private time_left_ = 0;
@@ -33,6 +59,8 @@ export class Timer {
   readonly on_time_out: RBXScriptSignal = this.time_out_event_.Event;
 
   private update_connection_?: RBXScriptConnection
+
+  // private constructor() { }
 
   Start(time_sec = -1) {
     if (time_sec > 0) {
@@ -70,7 +98,7 @@ export class Timer {
     if (this.stopped_) return;
 
     //clamps the time
-    this.time_left_ = max(this.time_left_, 0);
+    this.time_left_ = math.max(this.time_left_, 0);
     this.update_connection_?.Disconnect();
     this.paused = false;
     this.stopped_ = true;
