@@ -48,6 +48,7 @@ export class SecondOrderDynamics {
   Update(delta_time: number, x: Vector3, xd?: Vector3) {
     if (xd === undefined) { //estimate velocity
       xd = x.sub(this.xp_).div(delta_time);
+      this.xp_ = x
     }
     //clams k2 to guarantee stability
     const k2_stable = max(this.k2_, (delta_time * delta_time / 2 + delta_time * this.k1_ / 2), delta_time * this.k1_);
