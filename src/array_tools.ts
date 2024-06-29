@@ -74,7 +74,7 @@ export namespace ArrayTools {
    * @param a - inserted value
    * @param b - other value
    */
-  export function SortedInsert<T extends defined>(array: T[], value: T, insert_check: (a: T, b: T, index: number, array: T[]) => boolean) {
+  export function SortedInsert<T extends defined>(array: T[], value: T, insert_check: (current_value: T, b: T, index: number, array: T[]) => boolean) {
     for (const i of $range(0, array.size() - 1)) {
       if (!insert_check(value, array[i], i, array)) continue;
       array.insert(i, value);
