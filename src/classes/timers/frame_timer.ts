@@ -4,47 +4,53 @@ import { TweenTools } from "../../tween_tools";
 type FrameTimerCallback = (time_passed: number, delta_time: number) => void;
 type SteppingEvent = RBXScriptSignal<(delta_time: number) => void>;
 
-export class FrameTimer {
-	static Builder = class Builder {
-		static Create() {
-			return new FrameTimer.Builder();
-		}
+class Builder {
+	static Create() {
+		return new FrameTimer.Builder();
+	}
 
-		/**@hidden */ timer_: FrameTimer = new FrameTimer();
-		/**@hidden */
-		auto_start_ = false;
-		WithWaitTime(value: number) {
-			this.timer_.wait_time = value;
-			return this;
-		}
-		WithOneShot(value: boolean) {
-			this.timer_.one_shot = value;
-			return this;
-		}
-		WithUpdateCallback(callback: FrameTimerCallback) {
-			this.timer_.SetUpdateCallback(callback);
-			return this;
-		}
-		WithTimeOutCallback(
-			callback: (connection?: RBXScriptConnection) => void,
-			with_connection?: (connection: RBXScriptConnection) => void,
-		) {
-			const connection = this.timer_.on_time_out.Connect(() => callback(connection));
-			with_connection?.(connection);
-			return this;
-		}
-		WithAutoStart() {
-			this.auto_start_ = true;
-			return this;
-		}
-		WithSteppingMethod(stepping_event: SteppingEvent) {
-			this.timer_.SetSteppingEvent(stepping_event);
-		}
-		Build() {
-			if (this.auto_start_) this.timer_.Start();
-			return this.timer_;
-		}
-	};
+	/**@hidden */
+	timer_: FrameTimer = new FrameTimer();
+	/**@hidden */
+	auto_start_ = false;
+	WithWaitTime(value: number) {
+		this.timer_.wait_time = value;
+		return this;
+	}
+	WithOneShot(value: boolean) {
+		this.timer_.one_shot = value;
+		return this;
+	}
+	WithUpdateCallback(callback: FrameTimerCallback) {
+		this.timer_.SetUpdateCallback(callback);
+		return this;
+	}
+	WithTimeOutCallback(
+		callback: (connection?: RBXScriptConnection) => void,
+		with_connection?: (connection: RBXScriptConnection) => void,
+	) {
+		const connection = this.timer_.on_time_out.Connect(() => callback(connection));
+		with_connection?.(connection);
+		return this;
+	}
+	WithAutoStart() {
+		this.auto_start_ = true;
+		return this;
+	}
+	WithSteppingMethod(stepping_event: SteppingEvent) {
+		this.timer_.SetSteppingEvent(stepping_event);
+	}
+	Build() {
+		if (this.auto_start_) this.timer_.Start();
+		return this.timer_;
+	}
+}
+
+/**the constructor will be private
+ * @see https://discord.com/channels/476080952636997633/1253704157744074822
+ */
+export class FrameTimer {
+	static Builder = Builder;
 
 	static CreateTween<T extends Tweenable>(
 		start_value: T,
@@ -148,7 +154,7 @@ export class FrameTimer {
 		return this;
 	}
 
-	private constructor() {}
+	// private constructor() {}
 
 	Start(time_sec = -1) {
 		if (time_sec > 0) {
