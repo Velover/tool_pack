@@ -1,8 +1,13 @@
 /**the constructor will be private
  * @see https://discord.com/channels/476080952636997633/1253704157744074822
  */
+
 export class CallbackTimer {
 	static Builder = class Builder {
+		static Create() {
+			return new Builder();
+		}
+
 		/**@hidden */
 		timer_: CallbackTimer = new CallbackTimer();
 		/**@hidden */
