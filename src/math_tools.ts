@@ -50,23 +50,26 @@ export namespace MathTools {
     return start + step;
   }
 
-  /**wraps angle to range [-pi, pi]*/
+  /**wraps angle to range [-pi, pi)
+   * @see https://stackoverflow.com/questions/2320986/easy-way-to-keeping-angles-between-179-and-180-degrees
+  */
   export function NormalizeAngle(alpha: number) {
-    //if bigger than pi, substracts tau * sign(angle);
-    //if less than pi, adds tau;
-    return abs(alpha) < pi ? alpha : -sign(alpha) * tau + alpha
+    return alpha - (math.floor((alpha + math.pi) / tau)) * tau;
+  }
+
+  /**@see https://stackoverflow.com/questions/1878907/how-can-i-find-the-smallest-difference-between-two-angles-around-a-point */
+  export function GetShortestAngle(start: number, target: number) {
+    if (start === target) return 0;
+    const difference = target - start;
+    return (difference + math.pi) % tau - math.pi;
   }
 
   /**lerpes the angle with fixed step
    * angle [-pi, pi]
   */
   export function LerpAngleWith(start: number, target: number, step: number) {
-    if (start === target) return target;
-    let angle = target - start;
-    //calculates the smallest angle
-    //if bigger or equals to pi, subtracts tau;
-    //if less or equals to -pi adds tau;
-    angle += abs(angle) >= pi ? tau * -sign(angle) : 0;
+    if (start === target) return NormalizeAngle(target);
+    let angle = GetShortestAngle(start, target);
 
     //calculates minimal step to not overwalk the angle
     step = min(step, abs(angle));
