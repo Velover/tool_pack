@@ -49,7 +49,7 @@ export class SecondOrderDynamicsAngle {
 	 * @returns new position
 	 */
 	Update(delta_time: number, x: number, xd?: number) {
-		if (delta_time <= 0) return;
+		if (delta_time <= 0) return this.y_;
 
 		x = MathTools.NormalizeAngle(x);
 		if (xd === undefined) {

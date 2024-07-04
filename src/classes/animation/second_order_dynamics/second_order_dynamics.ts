@@ -46,7 +46,7 @@ export class SecondOrderDynamics {
 	 * @returns new position
 	 */
 	Update(delta_time: number, x: Vector3, xd?: Vector3) {
-		if (delta_time <= 0) return;
+		if (delta_time <= 0) return this.y_;
 		if (xd === undefined) {
 			//estimate velocity
 			xd = x.sub(this.xp_).div(delta_time);
