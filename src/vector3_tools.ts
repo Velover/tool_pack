@@ -1,49 +1,83 @@
 //!native
 //!optimize 2
 export namespace Vector3Tools {
-  const clamp = math.clamp;
-  const min = math.min;
+	const clamp = math.clamp;
+	const min = math.min;
 
-  /**
-   * clamps the vector between the numbers
-  */
-  export function Clamp(vector: Vector3, min: number, max: number) {
-    return new Vector3(
-      clamp(vector.X, min, max),
-      clamp(vector.Y, min, max),
-      clamp(vector.Z, min, max)
-    )
-  }
+	/**
+	 * clamps the vector between the numbers
+	 */
+	export function Clamp(vector: Vector3, min: number, max: number) {
+		return new Vector3(clamp(vector.X, min, max), clamp(vector.Y, min, max), clamp(vector.Z, min, max));
+	}
 
-  export function ClampWithVector(vector: Vector3, min_vector: Vector3, max_vector: Vector3) {
-    return new Vector3(
-      math.clamp(vector.X, min_vector.X, max_vector.X),
-      math.clamp(vector.Y, min_vector.Y, max_vector.Y),
-      math.clamp(vector.Z, min_vector.Z, max_vector.Z)
-    )
-  }
+	export function ClampWithVector(vector: Vector3, min_vector: Vector3, max_vector: Vector3) {
+		return new Vector3(
+			math.clamp(vector.X, min_vector.X, max_vector.X),
+			math.clamp(vector.Y, min_vector.Y, max_vector.Y),
+			math.clamp(vector.Z, min_vector.Z, max_vector.Z),
+		);
+	}
 
-  export function LerpWithMagnitude(start_vector: Vector3, target_vector: Vector3, step: number) {
-    const difference = target_vector.sub(start_vector);
-    //if difference is 0 return the target;
-    if (difference.Magnitude === 0) return target_vector;
-    step = min(difference.Magnitude, step);
-    //add difference with magnitude of step;
-    return start_vector.add(difference.Unit.mul(step));
-  }
+	export function LerpWithMagnitude(start_vector: Vector3, target_vector: Vector3, step: number) {
+		const difference = target_vector.sub(start_vector);
+		//if difference is 0 return the target;
+		if (difference.Magnitude === 0) return target_vector;
+		step = min(difference.Magnitude, step);
+		//add difference with magnitude of step;
+		return start_vector.add(difference.Unit.mul(step));
+	}
 
-  export function ClampMagnitude(vector: Vector3, min: number, max: number) {
-    if (vector.Magnitude > max || vector.Magnitude < min) {
-      //sets the magnitude to clamped value;
-      vector = vector.Unit.mul(clamp(vector.Magnitude, min, max))
-    }
-    return vector;
-  }
+	export function ClampMagnitude(vector: Vector3, min: number, max: number) {
+		if (vector.Magnitude > max || vector.Magnitude < min) {
+			//sets the magnitude to clamped value;
+			vector = vector.Unit.mul(clamp(vector.Magnitude, min, max));
+		}
+		return vector;
+	}
 
-  /**
-   * @returns mirrors a around b
-   */
-  export function Mirror(a: Vector3, b: Vector3) {
-    return b.add(b.sub(a));
-  }
+	/**
+	 * @returns mirrors a around b
+	 */
+	export function Mirror(a: Vector3, b: Vector3) {
+		return b.add(b.sub(a));
+	}
+
+	/**
+	 * will not return nan if Vector3.zero is normalized
+	 */
+	export function Normalize(vector: Vector3) {
+		return vector === Vector3.zero ? Vector3.zero : vector.Unit;
+	}
+
+	export function Slerp(start: Vector3, finish: Vector3, alpha: number) {
+		start = Normalize(start);
+		finish = Normalize(finish);
+		const dot = math.clamp(start.Dot(finish), -1, 1);
+
+		const theta = math.acos(dot) * alpha;
+		const relative_vector = Normalize(finish.sub(start.mul(dot)));
+
+		return start.mul(math.cos(theta)).add(relative_vector.mul(math.sin(theta)));
+	}
+
+	export function InverseSlerp(a: Vector3, b: Vector3, x: Vector3) {
+		const a_dot_b = a.Dot(b);
+		const a_cross_b = a.Cross(b);
+		const a_dot_c = a.Dot(x);
+		const a_cross_c = a.Cross(x);
+
+		const projection_angle = math.atan2(a_cross_b.Dot(a_cross_c), a_cross_b.Magnitude * a_dot_c);
+		const full_angle = math.atan2(a_cross_b.Magnitude, a_dot_b);
+
+		return projection_angle / full_angle;
+	}
+
+	export function InverseLerp(a: Vector3, b: Vector3, x: Vector3) {
+		const a_1 = a.sub(x);
+		const b_1 = b.sub(a);
+
+		const t = a_1.Dot(b_1) / b_1.Dot(b_1);
+		return t;
+	}
 }
