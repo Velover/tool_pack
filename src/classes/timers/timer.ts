@@ -22,7 +22,9 @@ class Builder {
 		callback: (connection?: RBXScriptConnection) => void,
 		with_connection?: (connection: RBXScriptConnection) => void,
 	) {
-		const connection = this.timer_.on_time_out.Connect(() => callback(connection));
+		const connection = this.timer_.on_time_out.Connect(() =>
+			callback(connection),
+		);
 		with_connection?.(connection);
 		return this;
 	}
@@ -77,7 +79,9 @@ export class Timer {
 		this.time_left_ = this.wait_time;
 		//takes stopped flag away
 		this.stopped_ = false;
-		this.update_connection_ = RunService.Heartbeat.Connect((delta_time) => this.Update(delta_time));
+		this.update_connection_ = RunService.Heartbeat.Connect((delta_time) =>
+			this.Update(delta_time),
+		);
 	}
 
 	private Update(delta_time: number) {

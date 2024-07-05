@@ -29,7 +29,9 @@ class Builder {
 		callback: (connection?: RBXScriptConnection) => void,
 		with_connection?: (connection: RBXScriptConnection) => void,
 	) {
-		const connection = this.timer_.on_time_out.Connect(() => callback(connection));
+		const connection = this.timer_.on_time_out.Connect(() =>
+			callback(connection),
+		);
 		with_connection?.(connection);
 		return this;
 	}
@@ -66,7 +68,8 @@ export class FrameTimer {
 			target_value,
 			wait_time,
 			() => {
-				return (alpha) => TweenService.GetValue(alpha, easing_style, easing_direction);
+				return (alpha) =>
+					TweenService.GetValue(alpha, easing_style, easing_direction);
 			},
 			set_function,
 			auto_start,
@@ -101,8 +104,17 @@ export class FrameTimer {
 		const alpha_generator = create_new_alpha_generator();
 		timer.SetUpdateCallback((time_passed, delta_time) => {
 			const alpha = time_passed / wait_time;
-			const new_alpha = alpha_generator(alpha, delta_time, time_passed, wait_time);
-			const new_value = TweenTools.LerpValue(start_value, target_value, new_alpha);
+			const new_alpha = alpha_generator(
+				alpha,
+				delta_time,
+				time_passed,
+				wait_time,
+			);
+			const new_value = TweenTools.LerpValue(
+				start_value,
+				target_value,
+				new_alpha,
+			);
 			set_function(new_value);
 		});
 		if (auto_start) timer.Start();
@@ -169,7 +181,9 @@ export class FrameTimer {
 
 		//takes stopped flag away
 		this.stopped_ = false;
-		this.update_connection_ = this.stepping_event_.Connect((delta_time) => this.Update(delta_time));
+		this.update_connection_ = this.stepping_event_.Connect((delta_time) =>
+			this.Update(delta_time),
+		);
 
 		return this;
 	}
@@ -177,7 +191,6 @@ export class FrameTimer {
 	/**
 	 * yields the thread til the timer has finished
 	 * @param ignore_if_stopped if false, yields til the timer will fire on_time_out even if stopped, defaults to true
-	 *
 	 */
 	Await(ignore_if_stopped: boolean = true) {
 		if (ignore_if_stopped && this.stopped_) return this;
@@ -191,7 +204,10 @@ export class FrameTimer {
 
 		this.time_left_ -= delta_time;
 		//clamps to wait time
-		const time_passed = math.min(this.initialized_wait_time_ - this.time_left_, this.wait_time);
+		const time_passed = math.min(
+			this.initialized_wait_time_ - this.time_left_,
+			this.wait_time,
+		);
 		this.update_callback_(time_passed, delta_time);
 		if (this.time_left_ > 0) return;
 

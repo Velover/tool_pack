@@ -61,7 +61,10 @@ export class SecondOrderDynamicsNumber {
 		// integrate position by velocity
 		this.y_ = this.y_ + this.yd_ * delta_time;
 		//integrate velocity by acceleration
-		this.yd_ = this.yd_ + (delta_time * (x + this.k3_ * xd - this.y_ - this.k1_ * this.yd_)) / k2_stable;
+		this.yd_ =
+			this.yd_ +
+			(delta_time * (x + this.k3_ * xd - this.y_ - this.k1_ * this.yd_)) /
+				k2_stable;
 
 		return this.y_;
 	}

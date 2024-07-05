@@ -1,4 +1,4 @@
-export * from "./classes"
+export * from "./classes";
 
 export * from "./array_tools";
 export * from "./assets_tools";

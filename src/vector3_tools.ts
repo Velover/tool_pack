@@ -8,10 +8,18 @@ export namespace Vector3Tools {
 	 * clamps the vector between the numbers
 	 */
 	export function Clamp(vector: Vector3, min: number, max: number) {
-		return new Vector3(clamp(vector.X, min, max), clamp(vector.Y, min, max), clamp(vector.Z, min, max));
+		return new Vector3(
+			clamp(vector.X, min, max),
+			clamp(vector.Y, min, max),
+			clamp(vector.Z, min, max),
+		);
 	}
 
-	export function ClampWithVector(vector: Vector3, min_vector: Vector3, max_vector: Vector3) {
+	export function ClampWithVector(
+		vector: Vector3,
+		min_vector: Vector3,
+		max_vector: Vector3,
+	) {
 		return new Vector3(
 			math.clamp(vector.X, min_vector.X, max_vector.X),
 			math.clamp(vector.Y, min_vector.Y, max_vector.Y),
@@ -19,7 +27,11 @@ export namespace Vector3Tools {
 		);
 	}
 
-	export function LerpWithMagnitude(start_vector: Vector3, target_vector: Vector3, step: number) {
+	export function LerpWithMagnitude(
+		start_vector: Vector3,
+		target_vector: Vector3,
+		step: number,
+	) {
 		const difference = target_vector.sub(start_vector);
 		//if difference is 0 return the target;
 		if (difference.Magnitude === 0) return target_vector;
@@ -67,7 +79,10 @@ export namespace Vector3Tools {
 		const a_dot_c = a.Dot(x);
 		const a_cross_c = a.Cross(x);
 
-		const projection_angle = math.atan2(a_cross_b.Dot(a_cross_c), a_cross_b.Magnitude * a_dot_c);
+		const projection_angle = math.atan2(
+			a_cross_b.Dot(a_cross_c),
+			a_cross_b.Magnitude * a_dot_c,
+		);
 		const full_angle = math.atan2(a_cross_b.Magnitude, a_dot_b);
 
 		return projection_angle / full_angle;
