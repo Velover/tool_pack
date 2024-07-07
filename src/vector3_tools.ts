@@ -59,7 +59,7 @@ export namespace Vector3Tools {
 	 * will not return nan if Vector3.zero is normalized
 	 */
 	export function Normalize(vector: Vector3) {
-		return vector === Vector3.zero ? Vector3.zero : vector.Unit;
+		return vector.FuzzyEq(Vector3.zero, 1e-5) ? Vector3.zero : vector.Unit;
 	}
 
 	export function Slerp(start: Vector3, finish: Vector3, alpha: number) {
