@@ -161,7 +161,7 @@ export namespace MathTools {
 		//return first if alpha is 0
 		if (alpha === 0) return keypoints[0].Value;
 		//return last if alpha is 1
-		if (alpha === 1) return keypoints[keypoints.size() - 1];
+		if (alpha === 1) return keypoints[keypoints.size() - 1].Value;
 
 		let current_keypoint;
 		let next_keypoint;
