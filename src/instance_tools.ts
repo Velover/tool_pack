@@ -16,11 +16,13 @@ export namespace InstanceTools {
 	export function Create<T extends keyof CreatableInstances>(
 		class_name: T,
 		properties: InstancePropertiesList<CreatableInstances[T]>,
+		callback?: (intance: CreatableInstances[T]) => void,
 	) {
 		//creates the instance
 		const instance = new Instance(class_name) as CreatableInstances[T];
 		//assigns the properties
 		AsignProperties(instance, properties);
+		callback?.(instance);
 		return instance;
 	}
 

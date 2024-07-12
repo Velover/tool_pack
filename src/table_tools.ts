@@ -218,4 +218,12 @@ export namespace TableTools {
 	export function GetRandomValue<T extends DefinedMap>(map: T) {
 		return ArrayTools.GetRandomElement(TableTools.GetValues(map));
 	}
+
+	export function GetOrCreate<K, V>(
+		map: Map<K, V>,
+		key: K,
+		create_callback: (key: K, map: Map<K, V>) => V,
+	) {
+		return map.get(key) ?? map.set(key, create_callback(key, map)).get(key);
+	}
 }
