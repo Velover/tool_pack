@@ -263,9 +263,14 @@ export namespace ArrayTools {
 	 * makes binary search in sorted array
 	 * @param array
 	 * @param element
+	 * @param return_min if didnt find the element and this is true, will return the index of the closes smallest element
 	 * @returns index of the element, -1 if didnt find the element
 	 */
-	export function BinarySearch(array: readonly number[], element: number) {
+	export function BinarySearch(
+		array: readonly number[],
+		element: number,
+		return_min?: boolean,
+	) {
 		let low = 0;
 		let high = array.size() - 1;
 		while (low <= high) {
@@ -277,19 +282,21 @@ export namespace ArrayTools {
 				high = mid - 1;
 			}
 		}
-		return -1;
+		return return_min ? math.max(math.min(low, high), 0) : -1;
 	}
 
 	/**
 	 * makes binary search in sorted array
 	 * @param array
 	 * @param element
+	 * @param return_min if didnt find the element and this is true, will return the index of the closes smallest element
 	 * @returns index of the element, -1 if didnt find the element
 	 */
 	export function BinarySearchObject<T>(
 		array: readonly T[],
 		element: number,
 		selector: (element: T) => number,
+		return_min?: boolean,
 	) {
 		let low = 0;
 		let high = array.size() - 1;
@@ -304,6 +311,6 @@ export namespace ArrayTools {
 			}
 		}
 
-		return -1;
+		return return_min ? math.max(math.min(low, high), 0) : -1;
 	}
 }
