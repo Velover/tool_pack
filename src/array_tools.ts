@@ -258,4 +258,52 @@ export namespace ArrayTools {
 		const size = array.size();
 		return array[size !== 0 ? index % size : 0];
 	}
+
+	/**
+	 * makes binary search in sorted array
+	 * @param array
+	 * @param element
+	 * @returns index of the element, -1 if didnt find the element
+	 */
+	export function BinarySearch(array: readonly number[], element: number) {
+		let low = 0;
+		let high = array.size() - 1;
+		while (low <= high) {
+			const mid = low + math.floor((high - low) / 2);
+			if (array[mid] === element) return mid;
+			if (array[mid] < element) {
+				low = mid + 1;
+			} else {
+				high = mid - 1;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * makes binary search in sorted array
+	 * @param array
+	 * @param element
+	 * @returns index of the element, -1 if didnt find the element
+	 */
+	export function BinarySearchObject<T>(
+		array: readonly T[],
+		element: number,
+		selector: (element: T) => number,
+	) {
+		let low = 0;
+		let high = array.size() - 1;
+		while (low <= high) {
+			const mid = low + math.floor((high - low) / 2);
+			const middle_element = selector(array[mid]);
+			if (middle_element === element) return mid;
+			if (middle_element < element) {
+				low = mid + 1;
+			} else {
+				high = mid - 1;
+			}
+		}
+
+		return -1;
+	}
 }
