@@ -21,8 +21,6 @@ export namespace DetectingTools {
 		new Vector3(-1, -1, -1),
 	]);
 
-	const vector_xy = new Vector3(1, 1, 0);
-
 	/**@returns corners in global space */
 	function GetCorners(part: BasePart, local_space?: boolean) {
 		const part_corners = new Array<Vector3>(8);
@@ -36,6 +34,50 @@ export namespace DetectingTools {
 		}
 
 		return part_corners;
+	}
+
+	function PointsLocalSpace(cframe: CFrame, world_points: Array<Vector3>) {
+		const local_points = new Array<Vector3>(8);
+		for (const point of world_points) {
+			local_points.push(cframe.PointToObjectSpace(point));
+		}
+
+		return local_points;
+	}
+
+	/**
+	 * checks if the part insode of the zone part
+	 * @param zone
+	 * @param part
+	 * @param fully_inside
+	 * @returns
+	 */
+	export function IsPartInside(
+		zone: BasePart,
+		part: BasePart,
+		fully_inside: boolean = true,
+	) {
+		const zone_half_size = zone.Size.mul(0.5);
+		//takes the corners of the part
+		const part_corners = GetCorners(part);
+
+		//converts points of the part to the local space of the zone;
+		const converted_part_corners = PointsLocalSpace(zone.CFrame, part_corners);
+
+		let is_fully_inside = true;
+		for (const converted_corner of converted_part_corners) {
+			const is_in_x = abs(converted_corner.X) <= zone_half_size.X;
+			const is_in_y = abs(converted_corner.Y) <= zone_half_size.Y;
+			const is_in_z = abs(converted_corner.Z) <= zone_half_size.Z;
+			const is_inside = is_in_x && is_in_y && is_in_z;
+
+			if (!fully_inside && is_inside) return true;
+
+			//if fully inside makes other calculation
+			is_fully_inside = is_fully_inside && is_inside;
+		}
+
+		return is_fully_inside;
 	}
 
 	/**
@@ -103,50 +145,6 @@ export namespace DetectingTools {
 		}
 
 		return view_port_points;
-	}
-
-	function PointsLocalSpace(cframe: CFrame, world_points: Array<Vector3>) {
-		const local_points = new Array<Vector3>(8);
-		for (const point of world_points) {
-			local_points.push(cframe.PointToObjectSpace(point));
-		}
-
-		return local_points;
-	}
-
-	/**
-	 * checks if the part insode of the zone part
-	 * @param zone
-	 * @param part
-	 * @param fully_inside
-	 * @returns
-	 */
-	export function IsPartInside(
-		zone: BasePart,
-		part: BasePart,
-		fully_inside: boolean = true,
-	) {
-		const zone_half_size = zone.Size.mul(0.5);
-		//takes the corners of the part
-		const part_corners = GetCorners(part);
-
-		//converts points of the part to the local space of the zone;
-		const converted_part_corners = PointsLocalSpace(zone.CFrame, part_corners);
-
-		let is_fully_inside = true;
-		for (const converted_corner of converted_part_corners) {
-			const is_in_x = abs(converted_corner.X) <= zone_half_size.X;
-			const is_in_y = abs(converted_corner.Y) <= zone_half_size.Y;
-			const is_in_z = abs(converted_corner.Z) <= zone_half_size.Z;
-			const is_inside = is_in_x && is_in_y && is_in_z;
-
-			if (!fully_inside && is_inside) return true;
-
-			//if fully inside makes other calculation
-			is_fully_inside = is_fully_inside && is_inside;
-		}
-
-		return is_fully_inside;
 	}
 
 	function GetVerticesInterval(vertices: Vector3[], axis: Vector3) {
