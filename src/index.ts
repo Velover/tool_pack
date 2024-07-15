@@ -16,3 +16,7 @@ export * from "./table_tools";
 export * from "./tween_tools";
 export * from "./vector2_tools";
 export * from "./vector3_tools";
+
+export * from "./cframe_tools";
+// export * from "./matrix_tools";
+// export * from "./spline_tools"

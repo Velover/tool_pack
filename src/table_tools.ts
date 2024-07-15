@@ -226,4 +226,28 @@ export namespace TableTools {
 	) {
 		return map.get(key) ?? map.set(key, create_callback(key, map)).get(key);
 	}
+
+	export function Find<K, V>(
+		map: ReadonlyMap<K, V>,
+		check: (element: V, key: K, map: ReadonlyMap<K, V>) => boolean,
+	) {
+		for (const [key, value] of map) {
+			if (check(value, key, map)) return value;
+		}
+	}
+
+	export function FindKey<K, V>(
+		map: ReadonlyMap<K, V>,
+		check: (element: V, key: K, map: ReadonlyMap<K, V>) => boolean,
+	) {
+		for (const [key, value] of map) {
+			if (check(value, key, map)) return key;
+		}
+	}
+
+	export function KeyOf<K, V>(map: ReadonlyMap<K, V>, seached_value: V) {
+		for (const [key, value] of map) {
+			if (seached_value === value) return key;
+		}
+	}
 }
