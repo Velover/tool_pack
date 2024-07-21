@@ -64,27 +64,6 @@ export class FrameTimer {
 		start_value: T,
 		target_value: T,
 		wait_time: number,
-		auto_start?: boolean,
-		easing_style?: Enum.EasingStyle,
-		easing_direction?: Enum.EasingDirection,
-	) {
-		return (callback: (value: T) => void) => {
-			return this.CreateTween(
-				start_value,
-				target_value,
-				wait_time,
-				callback,
-				auto_start,
-				easing_style,
-				easing_direction,
-			);
-		};
-	}
-
-	static CreateTweenTemplate<T extends TweenTools.CustomTweenable>(
-		start_value: T,
-		target_value: T,
-		wait_time: number,
 		create_new_alpha_generator: () => (
 			alpha: number,
 			delta_time: number,
@@ -101,6 +80,27 @@ export class FrameTimer {
 				create_new_alpha_generator,
 				callback,
 				auto_start,
+			);
+		};
+	}
+
+	static CreateTweenTemplate<T extends TweenTools.CustomTweenable>(
+		start_value: T,
+		target_value: T,
+		wait_time: number,
+		auto_start?: boolean,
+		easing_style?: Enum.EasingStyle,
+		easing_direction?: Enum.EasingDirection,
+	) {
+		return (callback: (value: T) => void) => {
+			return this.CreateTween(
+				start_value,
+				target_value,
+				wait_time,
+				callback,
+				auto_start,
+				easing_style,
+				easing_direction,
 			);
 		};
 	}
