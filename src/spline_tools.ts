@@ -6,6 +6,7 @@ import { Vector3Tools } from "./vector3_tools";
 import { Vector } from "./classes";
 import { MatrixTools } from "./matrix_tools";
 
+//TODO finish
 export namespace SplineTools {
 	const b_spline_matrix = MatrixTools.MultiplyScalarByNumber(1 / 6, [
 		[1, 4, 1, 0],
@@ -61,7 +62,7 @@ export namespace SplineTools {
 			t_matrix,
 			numbers_matrix,
 		);
-		let summ = MatrixTools.MultiplyNumberByVector3(
+		const summ = MatrixTools.MultiplyNumberByVector3(
 			bernstein_matrix,
 			points_matrix,
 		);
@@ -86,7 +87,7 @@ export namespace SplineTools {
 			t_matrix,
 			numbers_matrix,
 		);
-		let summ = MatrixTools.MultiplyNumberByVector(
+		const summ = MatrixTools.MultiplyNumberByVector(
 			bernstein_matrix,
 			points_matrix,
 		);
@@ -111,7 +112,7 @@ export namespace SplineTools {
 			t_matrix,
 			numbers_matrix,
 		);
-		let summ = MatrixTools.MultiplyNumberByCFrame(
+		const summ = MatrixTools.MultiplyNumberByCFrame(
 			bernstein_matrix,
 			points_matrix,
 		);
