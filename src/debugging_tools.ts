@@ -3,6 +3,168 @@ export namespace DebuggingTools {
 	type DefinedMap = Map<defined, defined>;
 	type DefinedArray = Array<defined>;
 
+	/**writes the error in the console and doesnt stop anything */
+	export function SafeError(message: string) {
+		task.spawn(() => error(message));
+	}
+	/**
+	 * @returns list of all different keys
+	 */
+	export function GetDifferentKeys(
+		map_1: Map<string, defined>,
+		map_2: Map<string, defined>,
+	) {
+		const keys = new Map<string, boolean>();
+		for (const [key] of map_1) {
+			if (map_2.has(key)) continue;
+			//adds the key
+			keys.set(key, true);
+		}
+		for (const [key] of map_2) {
+			if (map_1.has(key)) continue;
+			keys.set(key, true);
+		}
+
+		const array = new Array<string>();
+		for (const [key] of keys) {
+			array.push(key);
+		}
+
+		return array;
+	}
+
+	export function FindFirstTable<T>(array: Array<defined>): T | undefined {
+		return array.find((value) => typeIs(value, "table")) as T;
+	}
+
+	export function IsArray(data: DefinedTable) {
+		return (data as DefinedMap).size() === (data as DefinedArray).size();
+	}
+	//prints the value and returns it;
+	export function PrintAndReturn<T>(value: T): T {
+		print(value);
+		return value;
+	}
+
+	/**
+	 * prints the map, useful to debug in the RobloxPlayer Console (F9)
+	 */
+	export function PrintMap(
+		map: DefinedMap,
+		scope: number = 0,
+		exceptions: Array<DefinedMap> = [],
+	) {
+		const brackets_space = "\t".rep(scope);
+		//prints { if scope is 0
+		if (scope === 0) print(`${brackets_space}{`);
+
+		/**spacing for the elements, they have deeper scope */
+		const scope_space = "\t".rep(++scope);
+		//checks if it's already printed the table
+
+		//clones itself to avoid cycle refference if other element contains the same map
+		exceptions = table.clone(exceptions);
+		//adds itself to exeptions
+		exceptions.push(map);
+
+		for (const [key, value] of map) {
+			let text = "";
+			//spacing from the start
+
+			//prints full name of an instance
+			if (typeIs(value, "Instance")) {
+				text = value.GetFullName();
+			} else if (typeIs(value, "table")) {
+				//if contains the same table, it's not going to print it
+				if (exceptions.includes(value as Map<defined, defined>))
+					text = "Cycle refference detected";
+				//prints the other table with higher scope and exceptions
+				else {
+					//prints the opening of the table
+					//quick fix because it didnt display the key if the table was printed
+					print(`${scope_space}[${key}] = {`);
+					//prints the table with current scope
+					PrintMap(value as Map<defined, defined>, scope, exceptions);
+					//skip the element
+					continue;
+				}
+			} else if (typeIs(value, "string")) {
+				//surrounds value in "
+				text = `"${value}"`;
+			} else text = tostring(value);
+			print(`${scope_space}[${key}] = ${text}`);
+		}
+		print(`${brackets_space}}`);
+	}
+
+	export namespace Instances {
+		type RecursiveInstanceMap = Map<
+			Instance,
+			(Instance | RecursiveInstanceMap)[]
+		>;
+		export function GetInstanceTree(instance: Instance): RecursiveInstanceMap {
+			const instances_list: (Instance | RecursiveInstanceMap)[] = [];
+			const recursive_instance_map: RecursiveInstanceMap = new Map([
+				[instance, instances_list],
+			]);
+
+			for (const child of instance.GetChildren()) {
+				if (child.GetChildren().size() !== 0) {
+					instances_list.push(GetInstanceTree(child));
+					continue;
+				}
+				instances_list.push(child);
+			}
+
+			return recursive_instance_map;
+		}
+
+		type RecursiveStringMap = Map<string, (string | RecursiveStringMap)[]>;
+		export function GetInstanceStringTree(
+			instance: Instance,
+			use_full_name: boolean = false,
+			use_class_name: boolean = false,
+		) {
+			function GetInstanceString(instance: Instance) {
+				if (use_class_name) return instance.ClassName;
+				if (use_full_name) return instance.GetFullName();
+				return instance.Name;
+			}
+
+			const instances_string_list: (string | RecursiveStringMap)[] = [];
+			const recursive_instance_map: RecursiveStringMap = new Map([
+				[GetInstanceString(instance), instances_string_list],
+			]);
+
+			for (const child of instance.GetChildren()) {
+				if (child.GetChildren().size() !== 0) {
+					//recursively takes the tables
+					instances_string_list.push(
+						GetInstanceStringTree(child, use_full_name, use_class_name),
+					);
+					continue;
+				}
+				instances_string_list.push(GetInstanceString(child));
+			}
+
+			return recursive_instance_map;
+		}
+
+		export function AnalizeInstanceStringTreeAndReturn(
+			turn_arrays_into_maps: boolean,
+			exact_values: boolean,
+			...args: Parameters<typeof GetInstanceStringTree>
+		) {
+			const instance_string_tree = GetInstanceStringTree(...args);
+			//analizes instance string tree as json and returns
+			return JSONAnalizer.AnalizeAndReturnJson(
+				instance_string_tree,
+				turn_arrays_into_maps,
+				exact_values,
+			);
+		}
+	}
+
 	export namespace JSONAnalizer {
 		type RecursiveTable = Map<string, [(string | RecursiveTable)[], boolean]>;
 		function AddToRecursiveTable(
@@ -259,163 +421,5 @@ export namespace DebuggingTools {
 		) {
 			print(AnalizeAndReturnJson(...args));
 		}
-	}
-
-	/**
-	 * @returns list of all different keys
-	 */
-	export function GetDifferentKeys(
-		map_1: Map<string, defined>,
-		map_2: Map<string, defined>,
-	) {
-		const keys = new Map<string, boolean>();
-		for (const [key] of map_1) {
-			if (map_2.has(key)) continue;
-			//adds the key
-			keys.set(key, true);
-		}
-		for (const [key] of map_2) {
-			if (map_1.has(key)) continue;
-			keys.set(key, true);
-		}
-
-		const array = new Array<string>();
-		for (const [key] of keys) {
-			array.push(key);
-		}
-
-		return array;
-	}
-
-	export namespace Instances {
-		type RecursiveInstanceMap = Map<
-			Instance,
-			(Instance | RecursiveInstanceMap)[]
-		>;
-		export function GetInstanceTree(instance: Instance): RecursiveInstanceMap {
-			const instances_list: (Instance | RecursiveInstanceMap)[] = [];
-			const recursive_instance_map: RecursiveInstanceMap = new Map([
-				[instance, instances_list],
-			]);
-
-			for (const child of instance.GetChildren()) {
-				if (child.GetChildren().size() !== 0) {
-					instances_list.push(GetInstanceTree(child));
-					continue;
-				}
-				instances_list.push(child);
-			}
-
-			return recursive_instance_map;
-		}
-
-		type RecursiveStringMap = Map<string, (string | RecursiveStringMap)[]>;
-		export function GetInstanceStringTree(
-			instance: Instance,
-			use_full_name: boolean = false,
-			use_class_name: boolean = false,
-		) {
-			function GetInstanceString(instance: Instance) {
-				if (use_class_name) return instance.ClassName;
-				if (use_full_name) return instance.GetFullName();
-				return instance.Name;
-			}
-
-			const instances_string_list: (string | RecursiveStringMap)[] = [];
-			const recursive_instance_map: RecursiveStringMap = new Map([
-				[GetInstanceString(instance), instances_string_list],
-			]);
-
-			for (const child of instance.GetChildren()) {
-				if (child.GetChildren().size() !== 0) {
-					//recursively takes the tables
-					instances_string_list.push(
-						GetInstanceStringTree(child, use_full_name, use_class_name),
-					);
-					continue;
-				}
-				instances_string_list.push(GetInstanceString(child));
-			}
-
-			return recursive_instance_map;
-		}
-
-		export function AnalizeInstanceStringTreeAndReturn(
-			turn_arrays_into_maps: boolean,
-			exact_values: boolean,
-			...args: Parameters<typeof GetInstanceStringTree>
-		) {
-			const instance_string_tree = GetInstanceStringTree(...args);
-			//analizes instance string tree as json and returns
-			return JSONAnalizer.AnalizeAndReturnJson(
-				instance_string_tree,
-				turn_arrays_into_maps,
-				exact_values,
-			);
-		}
-	}
-
-	export function FindFirstTable<T>(array: Array<defined>): T | undefined {
-		return array.find((value) => typeIs(value, "table")) as T;
-	}
-
-	export function IsArray(data: DefinedTable) {
-		return (data as DefinedMap).size() === (data as DefinedArray).size();
-	}
-	//prints the value and returns it;
-	export function PrintAndReturn<T>(value: T): T {
-		print(value);
-		return value;
-	}
-
-	/**
-	 * prints the map, useful to debug in the RobloxPlayer Console (F9)
-	 */
-	export function PrintMap(
-		map: DefinedMap,
-		scope: number = 0,
-		exceptions: Array<DefinedMap> = [],
-	) {
-		const brackets_space = "\t".rep(scope);
-		//prints { if scope is 0
-		if (scope === 0) print(`${brackets_space}{`);
-
-		/**spacing for the elements, they have deeper scope */
-		const scope_space = "\t".rep(++scope);
-		//checks if it's already printed the table
-
-		//clones itself to avoid cycle refference if other element contains the same map
-		exceptions = table.clone(exceptions);
-		//adds itself to exeptions
-		exceptions.push(map);
-
-		for (const [key, value] of map) {
-			let text = "";
-			//spacing from the start
-
-			//prints full name of an instance
-			if (typeIs(value, "Instance")) {
-				text = value.GetFullName();
-			} else if (typeIs(value, "table")) {
-				//if contains the same table, it's not going to print it
-				if (exceptions.includes(value as Map<any, any>))
-					text = "Cycle refference detected";
-				//prints the other table with higher scope and exceptions
-				else {
-					//prints the opening of the table
-					//quick fix because it didnt display the key if the table was printed
-					print(`${scope_space}[${key}] = {`);
-					//prints the table with current scope
-					PrintMap(value as Map<any, any>, scope, exceptions);
-					//skip the element
-					continue;
-				}
-			} else if (typeIs(value, "string")) {
-				//surrounds value in "
-				text = `"${value}"`;
-			} else text = tostring(value);
-			print(`${scope_space}[${key}] = ${text}`);
-		}
-		print(`${brackets_space}}`);
 	}
 }
