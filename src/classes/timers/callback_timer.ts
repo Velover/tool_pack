@@ -3,10 +3,12 @@ class Builder {
 		return new Builder();
 	}
 
-	/**@hidden */
-	timer_: CallbackTimer = new CallbackTimer();
-	/**@hidden */
-	auto_start_ = false;
+	private timer_: CallbackTimer = new CallbackTimer();
+	private auto_start_ = false;
+	WithTimer(callback: (timer: CallbackTimer) => void) {
+		callback(this.timer_);
+		return this;
+	}
 	WithWaitTime(value: number) {
 		this.timer_.wait_time = value;
 		return this;
@@ -37,11 +39,15 @@ class Builder {
 	}
 }
 
-/**the constructor will be private
- * @see https://discord.com/channels/476080952636997633/1253704157744074822
- */
+setmetatable(Builder, {
+	__call: () => {
+		return new Builder();
+	},
+});
+
+type CallableBuilder = typeof Builder & { (): Builder };
 export class CallbackTimer {
-	static Builder = Builder;
+	static Builder = Builder as CallableBuilder;
 
 	public wait_time = 1;
 	/**dont restart the timer til the callback is finished.

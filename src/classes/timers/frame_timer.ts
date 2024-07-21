@@ -9,10 +9,12 @@ class Builder {
 		return new FrameTimer.Builder();
 	}
 
-	/**@hidden */
-	timer_: FrameTimer = new FrameTimer();
-	/**@hidden */
-	auto_start_ = false;
+	private timer_: FrameTimer = new FrameTimer();
+	private auto_start_ = false;
+	WithTimer(callback: (timer: FrameTimer) => void) {
+		callback(this.timer_);
+		return this;
+	}
 	WithWaitTime(value: number) {
 		this.timer_.wait_time = value;
 		return this;
@@ -48,20 +50,69 @@ class Builder {
 	}
 }
 
-/**the constructor will be private
- * @see https://discord.com/channels/476080952636997633/1253704157744074822
- */
-export class FrameTimer {
-	static Builder = Builder;
+setmetatable(Builder, {
+	__call: () => {
+		return new Builder();
+	},
+});
 
-	static CreateTween<T extends Tweenable>(
+type CallableBuilder = typeof Builder & { (): Builder };
+export class FrameTimer {
+	static Builder = Builder as CallableBuilder;
+
+	static CreateCustomTweenTemplate<T extends TweenTools.CustomTweenable>(
+		start_value: T,
+		target_value: T,
+		wait_time: number,
+		auto_start?: boolean,
+		easing_style?: Enum.EasingStyle,
+		easing_direction?: Enum.EasingDirection,
+	) {
+		return (callback: (value: T) => void) => {
+			return this.CreateTween(
+				start_value,
+				target_value,
+				wait_time,
+				callback,
+				auto_start,
+				easing_style,
+				easing_direction,
+			);
+		};
+	}
+
+	static CreateTweenTemplate<T extends TweenTools.CustomTweenable>(
+		start_value: T,
+		target_value: T,
+		wait_time: number,
+		create_new_alpha_generator: () => (
+			alpha: number,
+			delta_time: number,
+			time_passed: number,
+			wait_time: number,
+		) => number,
+		auto_start?: boolean,
+	) {
+		return (callback: (value: T) => void) => {
+			return this.CreateCustomTween(
+				start_value,
+				target_value,
+				wait_time,
+				create_new_alpha_generator,
+				callback,
+				auto_start,
+			);
+		};
+	}
+
+	static CreateTween<T extends TweenTools.CustomTweenable>(
 		start_value: T,
 		target_value: T,
 		wait_time: number,
 		set_function: (new_value: T) => void,
-		auto_start: boolean = true,
-		easing_style: Enum.EasingStyle = Enum.EasingStyle.Sine,
-		easing_direction: Enum.EasingDirection = Enum.EasingDirection.In,
+		auto_start: boolean = false,
+		easing_style: Enum.EasingStyle = Enum.EasingStyle.Cubic,
+		easing_direction: Enum.EasingDirection = Enum.EasingDirection.InOut,
 	) {
 		return FrameTimer.CreateCustomTween(
 			start_value,
@@ -86,7 +137,7 @@ export class FrameTimer {
 	 * @param auto_start
 	 * @returns
 	 */
-	static CreateCustomTween<T extends Tweenable>(
+	static CreateCustomTween<T extends TweenTools.CustomTweenable>(
 		start_value: T,
 		target_value: T,
 		wait_time: number,
