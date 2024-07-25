@@ -1,8 +1,8 @@
 import { ArrayTools } from "./array_tools";
 
 //!native
-export type AnyArray<T = any> = Array<T> | ReadonlyArray<T>;
-export type AnyMap<K = any, V = any> = Map<K, V> | ReadonlyMap<K, V>;
+export type AnyArray<T = unknown> = Array<T> | ReadonlyArray<T>;
+export type AnyMap<K = unknown, V = unknown> = Map<K, V> | ReadonlyMap<K, V>;
 export type AnyData = {} | AnyMap | AnyArray;
 
 type MutableInterface<T extends {}> = {
@@ -224,7 +224,7 @@ export namespace TableTools {
 		key: K,
 		create_callback: (key: K, map: Map<K, V>) => V,
 	) {
-		return map.get(key) ?? map.set(key, create_callback(key, map)).get(key);
+		return map.get(key) ?? map.set(key, create_callback(key, map)).get(key)!;
 	}
 
 	export function Find<K, V>(
