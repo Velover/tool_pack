@@ -2,9 +2,6 @@
 import { RunService } from "@rbxts/services";
 import { MakeOnlyOptionalKeys } from "./table_tools";
 
-export type GetReturnType<T> = T extends (...args: any[]) => infer K
-	? K
-	: never;
 export namespace FunctionTools {
 	export function ExecuteIfClient<T extends unknown[], ReturnType>(
 		callback: (...args: T) => ReturnType,
@@ -44,11 +41,11 @@ export namespace FunctionTools {
 	 * @param callback
 	 * @returns
 	 */
-	export function CreateFunctionWithOptionalArguments<T extends {}, ReturnType>(
+	export function CreateFunctionWithOptionalArguments<T extends {}, Q>(
 		default_parameters: MakeOnlyOptionalKeys<T>,
-		callback: (data: T) => ReturnType,
+		callback: (data: T) => Q,
 	) {
-		return (data: T): GetReturnType<typeof callback> => {
+		return (data: T): ReturnType<typeof callback> => {
 			//applies all optional values
 			const default_map = default_parameters as unknown as Map<
 				keyof T,

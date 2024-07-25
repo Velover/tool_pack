@@ -160,7 +160,7 @@ export namespace InstanceTools {
 		let child = instance;
 		for (const name of path) {
 			//used for error handling
-			let previous = child;
+			const previous = child;
 
 			//if the name is .. go to parent, otherwise find first child
 			child = name === ".." ? child!.Parent! : child!.WaitForChild(name);

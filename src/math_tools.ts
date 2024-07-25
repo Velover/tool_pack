@@ -69,7 +69,7 @@ export namespace MathTools {
 	 */
 	export function LerpAngleWith(start: number, target: number, step: number) {
 		if (start === target) return NormalizeAngle(target);
-		let angle = GetShortestAngle(start, target);
+		const angle = GetShortestAngle(start, target);
 
 		//calculates minimal step to not overwalk the angle
 		step = min(step, abs(angle));

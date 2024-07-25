@@ -4,7 +4,6 @@ import { MathTools } from "./math_tools";
 
 //!optimize 2
 export namespace ColorTools {
-	const floor = math.floor;
 	/**packs color in binary form 32bit */
 	export function PackColor(r: number, g: number, b: number, a: number) {
 		return (r * 255) | ((g * 255) << 8) | ((b * 255) << 16) | ((a * 255) << 24);
@@ -50,13 +49,13 @@ export namespace ColorTools {
 		return pow((value + 0.055) / 1.055, 2.4);
 	}
 	function ConvertToLinearColorSpace(color: Color3) {
-		let r = ConvertValueToLinearColorSpace(color.R);
-		let g = ConvertValueToLinearColorSpace(color.G);
-		let b = ConvertValueToLinearColorSpace(color.B);
+		const r = ConvertValueToLinearColorSpace(color.R);
+		const g = ConvertValueToLinearColorSpace(color.G);
+		const b = ConvertValueToLinearColorSpace(color.B);
 		return $tuple(r, g, b);
 	}
 	export function GetRelativeLuminance(color: Color3) {
-		let [r, g, b] = ConvertToLinearColorSpace(color);
+		const [r, g, b] = ConvertToLinearColorSpace(color);
 		return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 	}
 
