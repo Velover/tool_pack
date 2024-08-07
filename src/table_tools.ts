@@ -1,8 +1,10 @@
+//!native
 import { ArrayTools } from "./array_tools";
 
-//!native
-export type AnyArray<T = unknown> = Array<T> | ReadonlyArray<T>;
-export type AnyMap<K = unknown, V = unknown> = Map<K, V> | ReadonlyMap<K, V>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyArray<T = any> = Array<T> | ReadonlyArray<T>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyMap<K = any, V = any> = Map<K, V> | ReadonlyMap<K, V>;
 export type AnyData = {} | AnyMap | AnyArray;
 
 type MutableInterface<T extends {}> = {
