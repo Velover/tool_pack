@@ -95,4 +95,18 @@ export namespace Vector3Tools {
 		const t = a_1.Dot(b_1) / b_1.Dot(b_1);
 		return t;
 	}
+
+	/**
+	 *
+	 * @param vector
+	 * @returns turns every nan component into 0
+	 */
+	export function FixVector3(vector: Vector3) {
+		if (vector === vector) return vector;
+		return new Vector3(
+			vector.X === vector.X ? vector.X : 0,
+			vector.Y === vector.Y ? vector.Y : 0,
+			vector.Z === vector.Z ? vector.Z : 0,
+		);
+	}
 }
