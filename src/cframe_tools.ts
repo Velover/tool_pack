@@ -88,4 +88,19 @@ export namespace CFrameTools {
 		const [x, y, z, a, b, c, d, e, f, g, h, i] = cframe.GetComponents();
 		return a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
 	}
+
+	/**
+	 *
+	 * @param cframe
+	 * @returns turns every nan component into 0
+	 */
+	export function FixCFrame(cframe: CFrame) {
+		if (cframe === cframe) return cframe;
+		const components = cframe.GetComponents();
+		const new_components = new Array<number>(12);
+		for (let i = 0; i < components.size(); i++) {
+			new_components[i] = components[i] === components[i] ? components[i] : 0;
+		}
+		return new CFrame(...(new_components as CFrameComponents));
+	}
 }
