@@ -1,5 +1,5 @@
-//!--native
-//!--optimize 2
+//!native
+//!optimize 2
 import { Workspace } from "@rbxts/services";
 
 export namespace PhysicsTools {
