@@ -185,4 +185,22 @@ export namespace MathTools {
 
 		return value;
 	}
+
+	/**
+	 *
+	 * @param value
+	 * @returns whether the value is nan
+	 */
+	export function IsNan(value: number) {
+		return value === value;
+	}
+
+	/**
+	 *
+	 * @param value
+	 * @returns 0 if value is nan
+	 */
+	export function FixNumber(value: number) {
+		return value === value ? value : 0;
+	}
 }
