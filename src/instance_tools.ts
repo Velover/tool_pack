@@ -1,9 +1,9 @@
 import { Players } from "@rbxts/services";
 import { FunctionTools } from "./function_tools";
 
-export type InstancePropertiesList<T extends Instance> = {
-	[key in keyof WritableInstanceProperties<T>]?: WritableInstanceProperties<T>[key];
-};
+export type InstancePropertiesList<T extends Instance> = Partial<
+	WritableInstanceProperties<T>
+>;
 export namespace InstanceTools {
 	const random = new Random();
 
