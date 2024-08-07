@@ -1,7 +1,6 @@
 //!native
 
 import { Players, Workspace } from "@rbxts/services";
-import { FunctionTools } from "./function_tools";
 
 //!optimize 2
 export namespace DetectingTools {
