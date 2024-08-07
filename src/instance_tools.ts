@@ -37,11 +37,11 @@ export namespace InstanceTools {
 	) {
 		//needs the type cast to set the properties to the instance
 		const writable_instance = instance as unknown as {
-			[key in keyof WritableInstanceProperties<T>]: WritableInstanceProperties<T>;
+			[key in keyof WritableInstanceProperties<T>]: WritableInstanceProperties<T>[key];
 		};
 		const properties_map = properties as unknown as Map<
 			keyof WritableInstanceProperties<T>,
-			WritableInstanceProperties<T>
+			WritableInstanceProperties<T>[keyof WritableInstanceProperties<T>]
 		>;
 		for (const [property_name, value] of properties_map) {
 			writable_instance[property_name] = value;
