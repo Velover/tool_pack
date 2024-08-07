@@ -2,7 +2,6 @@
 //!optimize 2
 import { MathTools } from "./math_tools";
 
-//!optimize 2
 export namespace ColorTools {
 	/**packs color in binary form 32bit */
 	export function PackColor(r: number, g: number, b: number, a: number) {
