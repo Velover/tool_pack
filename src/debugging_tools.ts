@@ -1,3 +1,5 @@
+import { TableTools } from "./table_tools";
+
 export namespace DebuggingTools {
 	type DefinedTable = DefinedMap | DefinedArray;
 	type DefinedMap = Map<defined, defined>;
@@ -37,9 +39,6 @@ export namespace DebuggingTools {
 		return array.find((value) => typeIs(value, "table")) as T;
 	}
 
-	export function IsArray(data: DefinedTable) {
-		return (data as DefinedMap).size() === (data as DefinedArray).size();
-	}
 	//prints the value and returns it;
 	export function PrintAndReturn<T>(value: T): T {
 		print(value);
@@ -221,7 +220,7 @@ export namespace DebuggingTools {
 				return exact_values ? tostring(value) : typeOf(value);
 			}
 
-			const is_array = turn_arrays_into_maps ? false : IsArray(data);
+			const is_array = turn_arrays_into_maps ? false : TableTools.IsArray(data);
 			if (is_array) {
 				const data_types = new Array<string | RecursiveTable>();
 				for (const value of data as DefinedArray) {
