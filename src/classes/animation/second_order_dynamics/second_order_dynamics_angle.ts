@@ -1,8 +1,8 @@
 //!native
+//!optimize 2
 
 import { MathTools } from "../../../math_tools";
 
-//!optimize 2
 const pi = math.pi;
 const max = math.max;
 /**
