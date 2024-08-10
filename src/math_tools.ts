@@ -7,7 +7,6 @@ export namespace MathTools {
 	const abs = math.abs;
 	const ceil = math.ceil;
 	const pow = math.pow;
-	const pi = math.pi;
 	const tau = 2 * math.pi;
 	/**
 	 * @param n
