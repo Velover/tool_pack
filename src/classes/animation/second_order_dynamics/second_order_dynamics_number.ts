@@ -68,4 +68,11 @@ export class SecondOrderDynamicsNumber {
 
 		return this.y_;
 	}
+
+	SetCurrent(value: number) {
+		this.y_ = value;
+	}
+	SetVelocity(value: number) {
+		this.yd_ = value;
+	}
 }

@@ -75,4 +75,11 @@ export class SecondOrderDynamicsAngle {
 		this.y_ = MathTools.NormalizeAngle(this.y_);
 		return this.y_;
 	}
+
+	SetCurrent(value: number) {
+		this.y_ = value;
+	}
+	SetVelocity(value: number) {
+		this.yd_ = value;
+	}
 }
