@@ -156,9 +156,9 @@ export namespace ArrayTools {
 	}
 
 	/**filters the same value, if selector is undefined will use the element itself to compare */
-	export function FilterSame<T extends defined>(
+	export function FilterSame<T extends defined, Q extends defined>(
 		array: Array<T>,
-		selector?: <Q extends defined>(element: T) => Q,
+		selector?: (element: T) => Q,
 	) {
 		const indexes_to_remove = new Array<number>();
 		const found_values = new Array<defined>();
