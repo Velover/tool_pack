@@ -1,3 +1,5 @@
+//!native
+//!optimize 2
 import { ArrayTools } from "./array_tools";
 import { DetectingTools2D } from "./detecting_tools_2d";
 import { Vector2Tools } from "./vector2_tools";
@@ -64,8 +66,8 @@ export namespace GuiTools {
 		base: GuiBase2d,
 		point: Vector2,
 		list: GuiObject[],
-		ignore_clipped: boolean = false,
-		ignore_not_visible: boolean = false,
+		ignore_clipped: boolean = true,
+		ignore_not_visible: boolean = true,
 	) {
 		const children = table.freeze(base.GetChildren());
 
@@ -90,8 +92,8 @@ export namespace GuiTools {
 	function GetOGuiObjectsAtPointGlobal(
 		base: GuiBase2d,
 		point: Vector2,
-		ignore_clipped: boolean = false,
-		ignore_not_visible: boolean = false,
+		ignore_clipped: boolean = true,
+		ignore_not_visible: boolean = true,
 	) {
 		const descendands = table.freeze(base.GetDescendants());
 		const list = new Array<GuiObject>();
@@ -111,15 +113,15 @@ export namespace GuiTools {
 	 *
 	 * @param base base 2d where all gui objets will be checked
 	 * @param point position of the screen
-	 * @param ignore_clipped ignore all gui objects that are clipped ("behind the boundaries")
-	 * @param ignore_not_visible ignore all gui objects that are not visible
+	 * @param ignore_clipped ignore all gui objects that are clipped ("behind the boundaries") default true
+	 * @param ignore_not_visible ignore all gui objects that are not visible default true
 	 * @param zindex_behaviour determites mode how it detects the elements
 	 */
 	export function GetOGuiObjectsAtPoint(
 		base: GuiBase2d,
 		point: Vector2,
-		ignore_clipped: boolean = false,
-		ignore_not_visible: boolean = false,
+		ignore_clipped: boolean = true,
+		ignore_not_visible: boolean = true,
 		zindex_behaviour: Enum.ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 	) {
 		if (zindex_behaviour === Enum.ZIndexBehavior.Sibling) {
@@ -139,14 +141,26 @@ export namespace GuiTools {
 		);
 	}
 
+	/**
+	 *
+	 * @param base base 2d where all gui objets will be checked
+	 * @param object object to check
+	 * @param point position of the screen
+	 * @param ignore_clipped ignore all gui objects that are clipped ("behind the boundaries") default true
+	 * @param ignore_not_visible ignore all gui objects that are not visible default true
+	 * @param zindex_behaviour defaults to Sibling
+	 * @returns
+	 */
 	export function IsObjectSelectedAtPoint(
 		base: GuiBase2d,
 		object: GuiObject,
 		point: Vector2,
-		ignore_clipped: boolean = false,
-		ignore_not_visible: boolean = false,
+		ignore_clipped: boolean = true,
+		ignore_not_visible: boolean = true,
 		zindex_behaviour: Enum.ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 	) {
+		if (!IsPointInside(object, point)) return;
+
 		const stack = GetOGuiObjectsAtPoint(
 			base,
 			point,
@@ -159,12 +173,20 @@ export namespace GuiTools {
 		let index = 0;
 		for (const element of stack) {
 			index++;
-			if (element === object) {
-				print(stack);
-				return true;
-			}
+			if (element === object) return true;
 			if (element.Active) return false;
 		}
 		return false;
+	}
+
+	export function GuiBaseToRect(base: GuiBase2d) {
+		return new Rect(
+			base.AbsolutePosition,
+			base.AbsolutePosition.add(base.AbsoluteSize),
+		);
+	}
+
+	export function GetAbsoluteCenter(base: GuiBase2d) {
+		return base.AbsolutePosition.add(base.AbsoluteSize.mul(0.5));
 	}
 }
