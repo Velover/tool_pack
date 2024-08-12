@@ -117,7 +117,7 @@ export namespace GuiTools {
 	 * @param ignore_not_visible ignore all gui objects that are not visible default true
 	 * @param zindex_behaviour determites mode how it detects the elements
 	 */
-	export function GetOGuiObjectsAtPoint(
+	export function GetGuiObjectsAtPoint(
 		base: GuiBase2d,
 		point: Vector2,
 		ignore_clipped: boolean = true,
@@ -161,7 +161,7 @@ export namespace GuiTools {
 	) {
 		if (!IsPointInside(object, point)) return;
 
-		const stack = GetOGuiObjectsAtPoint(
+		const stack = GetGuiObjectsAtPoint(
 			base,
 			point,
 			ignore_clipped,
