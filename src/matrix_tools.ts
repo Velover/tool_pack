@@ -4,6 +4,7 @@
 import { CFrameTools } from "./cframe_tools";
 import { Vector } from "./classes/vector";
 
+//TODO finish
 export namespace MatrixTools {
 	export type Matrix = number[][];
 	export type Vector3Matrix = Vector3[][];
