@@ -27,6 +27,18 @@ export namespace InstanceTools {
 	}
 
 	/**
+	 * destroys all children of instance
+	 * @param instance
+	 * @returns
+	 */
+	export function ClearChildren<T extends Instance>(instance: T) {
+		for (const child of instance.GetChildren()) {
+			child.Destroy();
+		}
+		return instance;
+	}
+
+	/**
 	 * @param instance
 	 * @param properties partial properties
 	 * @returns
@@ -49,6 +61,12 @@ export namespace InstanceTools {
 		return instance;
 	}
 
+	/**
+	 * checks if the descendant of some of the instances
+	 * @param instance
+	 * @param possible_ancestor_list possible ancestors
+	 * @returns
+	 */
 	export function IsDescendantOf(
 		instance: Instance,
 		possible_ancestor_list: Instance[],
@@ -226,6 +244,14 @@ export namespace InstanceTools {
 		return instance as CreatableInstances[T];
 	}
 
+	/**
+	 * gets or creates the instance of type
+	 * @param name
+	 * @param parent
+	 * @param class_name
+	 * @param properties
+	 * @returns
+	 */
 	export function GetOrCreate<T extends keyof CreatableInstances>(
 		name: string,
 		parent: Instance,
