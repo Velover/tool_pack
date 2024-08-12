@@ -155,7 +155,9 @@ export namespace ArrayTools {
 		error("array doent contain any items");
 	}
 
-	/**filters the same value, if selector is undefined will use the element itself to compare */
+	/**filters the same value, if selector is undefined will use the element itself to compare
+	 * overrides array and retuns it
+	 */
 	export function FilterSame<T extends defined, Q extends defined>(
 		array: Array<T>,
 		selector?: (element: T) => Q,
@@ -165,7 +167,7 @@ export namespace ArrayTools {
 		for (const i of $range(0, array.size() - 1)) {
 			const element = array[i];
 			//uses selector to select the element or uses element itself
-			const value = selector !== undefined ? selector(element) : element;
+			const value = selector?.(element) ?? element;
 			if (found_values.includes(value)) {
 				//adds to the indexes in order to remove
 				indexes_to_remove.push(i);
@@ -312,5 +314,19 @@ export namespace ArrayTools {
 		}
 
 		return return_min ? math.max(math.min(low, high), 0) : -1;
+	}
+	export function CountElement<T extends defined, Q>(
+		array: readonly T[],
+		search_element: Q,
+		selector?: (item: T) => Q,
+	) {
+		let amount = 0;
+
+		for (const element of array) {
+			if ((selector?.(element) ?? element) === search_element) {
+				++amount;
+			}
+		}
+		return amount;
 	}
 }
