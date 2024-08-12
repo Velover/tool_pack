@@ -62,7 +62,7 @@ export namespace GuiTools {
 	function ZIndexInsert(current_value: GuiObject, b: GuiObject) {
 		return current_value.ZIndex >= b.ZIndex;
 	}
-	function GetOGuiObjectsAtPointSibling(
+	function GetGuiObjectsAtPointSibling(
 		base: GuiBase2d,
 		point: Vector2,
 		list: GuiObject[],
@@ -77,7 +77,7 @@ export namespace GuiTools {
 			const can_be_added =
 				IsPointInside(child, point) && (ignore_clipped || IsNotClipped(child));
 			if (can_be_added) ArrayTools.SortedInsert(list, child, ZIndexInsert);
-			GetOGuiObjectsAtPointSibling(
+			GetGuiObjectsAtPointSibling(
 				child,
 				point,
 				list,
@@ -89,7 +89,7 @@ export namespace GuiTools {
 		return list;
 	}
 
-	function GetOGuiObjectsAtPointGlobal(
+	function GetGuiObjectsAtPointGlobal(
 		base: GuiBase2d,
 		point: Vector2,
 		ignore_clipped: boolean = true,
@@ -125,7 +125,7 @@ export namespace GuiTools {
 		zindex_behaviour: Enum.ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 	) {
 		if (zindex_behaviour === Enum.ZIndexBehavior.Sibling) {
-			return GetOGuiObjectsAtPointSibling(
+			return GetGuiObjectsAtPointSibling(
 				base,
 				point,
 				[],
@@ -133,7 +133,7 @@ export namespace GuiTools {
 				ignore_not_visible,
 			);
 		}
-		return GetOGuiObjectsAtPointGlobal(
+		return GetGuiObjectsAtPointGlobal(
 			base,
 			point,
 			ignore_clipped,
