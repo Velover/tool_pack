@@ -126,10 +126,19 @@ export namespace InstanceTools {
 		return children.find(check_function);
 	}
 
-	/**looks for the ancestor which is a character that belongs to a player */
+	/**looks for the ancestor which is a character that belongs to a player
+	 * @param check_full_ancestry if the part is deep in the character e.g Head.OtherPart.ThisPart, can be used to detect the character
+	 */
 	export function GetPlayerCharacterFromInstace(
 		part: Instance,
+		check_full_ancestry?: boolean,
 	): Model | undefined {
+		if (!check_full_ancestry) {
+			return Players.GetPlayerFromCharacter(part.Parent) !== undefined
+				? (part.Parent as Model)
+				: undefined;
+		}
+
 		const character = FindAncestor(part, (instance) => {
 			return (
 				instance.IsA("Model") &&
