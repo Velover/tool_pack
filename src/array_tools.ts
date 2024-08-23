@@ -329,4 +329,27 @@ export namespace ArrayTools {
 		}
 		return amount;
 	}
+
+	/**
+	 * splits array on arrays with fixed amount of components or less
+	 * @param array
+	 * @param amount_per_table
+	 * @returns
+	 */
+	export function SplitArray<T extends defined>(
+		array: readonly T[],
+		amount_per_table: number,
+	) {
+		const amount_of_tables = math.ceil(array.size() / amount_per_table);
+		const splitted_arrays = new Array<T[]>(amount_of_tables);
+		for (let i = 0; i < amount_of_tables; i++) {
+			splitted_arrays[i] = array.move(
+				i * amount_per_table,
+				(i + 1) * amount_per_table - 1,
+				0,
+				[],
+			);
+		}
+		return splitted_arrays;
+	}
 }
