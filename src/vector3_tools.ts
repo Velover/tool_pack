@@ -1,5 +1,8 @@
 //!native
 //!optimize 2
+
+import { ArrayTools } from "./array_tools";
+
 export namespace Vector3Tools {
 	const clamp = math.clamp;
 	const min = math.min;
@@ -107,6 +110,52 @@ export namespace Vector3Tools {
 			vector.X === vector.X ? vector.X : 0,
 			vector.Y === vector.Y ? vector.Y : 0,
 			vector.Z === vector.Z ? vector.Z : 0,
+		);
+	}
+
+	export const vector3_inf = new Vector3(math.huge, math.huge, math.huge);
+	export const vector3_neg_inf = vector3_inf.mul(-1);
+	/**
+	 * same as Vector3.Min but not limited by limitation of unpack
+	 * @param vector
+	 */
+	export function Min(vectors: readonly Vector3[]) {
+		if (vectors.size() === 0) return Vector3.zero;
+		const splitted_vector_arrays = ArrayTools.SplitArray(vectors, 1000);
+		let min = vector3_inf;
+		for (const vector_array of splitted_vector_arrays) {
+			min = min.Min(...vector_array);
+		}
+		return min;
+	}
+
+	/**
+	 * same as Vector3.Min but not limited by limitation of unpack
+	 * @param vectors
+	 * @returns
+	 */
+	export function Max(vectors: readonly Vector3[]) {
+		if (vectors.size() === 0) return Vector3.zero;
+		const splitted_vector_arrays = ArrayTools.SplitArray(vectors, 1000);
+		let max = vector3_neg_inf;
+		for (const vector_array of splitted_vector_arrays) {
+			max = max.Max(...vector_array);
+		}
+		return max;
+	}
+
+	const random = new Random();
+	export function RandomVector(min?: Vector3, max?: Vector3) {
+		if (min !== undefined || max !== undefined) {
+			assert(min !== undefined, "Min is nil");
+			assert(max !== undefined, "Max is nil");
+		}
+		if (min === undefined) {
+			return random.NextUnitVector();
+		}
+		const size = max!.sub(min);
+		return min.add(
+			size.mul(new Vector3(math.random(), math.random(), math.random())),
 		);
 	}
 }
