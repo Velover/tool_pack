@@ -90,4 +90,13 @@ export namespace DetectingTools2D {
 			max_contained.Y <= max_parent.Y
 		);
 	}
+
+	export function IsPointInRect(point: Vector2, rect: Rect) {
+		return (
+			point.X >= rect.Min.X &&
+			point.Y >= rect.Min.Y &&
+			point.X <= rect.Max.X &&
+			point.Y <= rect.Max.Y
+		);
+	}
 }
