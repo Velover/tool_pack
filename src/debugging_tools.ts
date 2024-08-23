@@ -7,7 +7,11 @@ export namespace DebuggingTools {
 
 	/**writes the error in the console and doesnt stop anything */
 	export function SafeError(message: string) {
-		task.spawn(() => error(message));
+		const traceback = debug.traceback();
+		task.spawn(() => {
+			error(message);
+		});
+		print(traceback);
 	}
 	/**
 	 * @returns list of all different keys
