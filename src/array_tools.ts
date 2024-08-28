@@ -35,7 +35,10 @@ export namespace ArrayTools {
 		return array.remove(array.indexOf(element));
 	}
 
-	/**removes all or 1 elements if they check function returns true */
+	/**removes all or 1 elements if they check function returns true
+	 * @param [stop_on_first=true]
+	 * @returns removed elements
+	 */
 	export function RemoveFromArray<T extends defined>(
 		array: T[],
 		check: (element: T) => boolean,
