@@ -150,8 +150,13 @@ export namespace InstanceTools {
 	}
 
 	/**looks for the ancestor which is a character and returns a player associated with it */
-	export function GetPlayerFromInstance(part: Instance): Player | undefined {
-		return Players.GetPlayerFromCharacter(GetPlayerCharacterFromInstace(part));
+	export function GetPlayerFromInstance(
+		part: Instance,
+		check_full_ancestry?: boolean,
+	): Player | undefined {
+		return Players.GetPlayerFromCharacter(
+			GetPlayerCharacterFromInstace(part, check_full_ancestry),
+		);
 	}
 
 	/**checks the backpack and the character */
