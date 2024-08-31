@@ -252,4 +252,12 @@ export namespace TableTools {
 			if (seached_value === value) return key;
 		}
 	}
+
+	export function ToPairs<K, V>(map: ReadonlyMap<K, V>): [K, V][] {
+		const key_value_pairs: [K, V][] = [];
+		for (const [k, v] of map) {
+			key_value_pairs.push([k, v]);
+		}
+		return key_value_pairs;
+	}
 }
