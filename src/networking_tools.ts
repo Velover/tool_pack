@@ -47,12 +47,21 @@ export namespace NetworkingTools {
 	 * @param parent parent where the remote event is located
 	 * @returns remote event
 	 */
-	export function DefineRemoteEvent<T extends Callback = Callback>(
+	export function DefineRemoteEvent<
+		T extends Callback = Callback,
+		Q extends boolean = false,
+	>(
 		name: string,
 		parent: Instance = GetOrCreateNetworkFolder(),
+		unreliable?: Q,
 	) {
-		return <RemoteEvent<T>>(
-			InstanceTools.DefineItem(name, parent, "RemoteEvent", {})
+		return <Q extends true ? UnreliableRemoteEvent<T> : RemoteEvent<T>>(
+			InstanceTools.DefineItem(
+				name,
+				parent,
+				unreliable ? "UnreliableRemoteEvent" : "RemoteEvent",
+				{},
+			)
 		);
 	}
 
