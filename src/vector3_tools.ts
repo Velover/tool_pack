@@ -115,13 +115,19 @@ export namespace Vector3Tools {
 
 	export const vector3_inf = new Vector3(math.huge, math.huge, math.huge);
 	export const vector3_neg_inf = vector3_inf.mul(-1);
+	const vector_list_split_size = 1000;
 	/**
 	 * same as Vector3.Min but not limited by limitation of unpack
 	 * @param vector
 	 */
 	export function Min(vectors: readonly Vector3[]) {
 		if (vectors.size() === 0) return Vector3.zero;
-		const splitted_vector_arrays = ArrayTools.SplitArray(vectors, 1000);
+		if (vectors.size() <= vector_list_split_size)
+			return vector3_inf.Min(...vectors);
+		const splitted_vector_arrays = ArrayTools.SplitArray(
+			vectors,
+			vector_list_split_size,
+		);
 		let min = vector3_inf;
 		for (const vector_array of splitted_vector_arrays) {
 			min = min.Min(...vector_array);
@@ -136,7 +142,12 @@ export namespace Vector3Tools {
 	 */
 	export function Max(vectors: readonly Vector3[]) {
 		if (vectors.size() === 0) return Vector3.zero;
-		const splitted_vector_arrays = ArrayTools.SplitArray(vectors, 1000);
+		if (vectors.size() <= vector_list_split_size)
+			return vector3_neg_inf.Max(...vectors);
+		const splitted_vector_arrays = ArrayTools.SplitArray(
+			vectors,
+			vector_list_split_size,
+		);
 		let max = vector3_neg_inf;
 		for (const vector_array of splitted_vector_arrays) {
 			max = max.Max(...vector_array);

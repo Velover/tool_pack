@@ -343,6 +343,7 @@ export namespace ArrayTools {
 		array: readonly T[],
 		amount_per_table: number,
 	) {
+		if (array.size() <= amount_per_table) return [array];
 		const amount_of_tables = math.ceil(array.size() / amount_per_table);
 		const splitted_arrays = new Array<T[]>(amount_of_tables);
 		for (let i = 0; i < amount_of_tables; i++) {
