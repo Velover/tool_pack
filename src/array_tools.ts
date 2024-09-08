@@ -359,4 +359,27 @@ export namespace ArrayTools {
 		}
 		return splitted_arrays;
 	}
+
+	/**
+	 * converts array to map
+	 * @param array array of elements to convert to the map
+	 * @param selector returns [key, value] for map
+	 * @returns map<key, value>
+	 */
+	export function ToMap<T extends defined, K, V>(
+		array: readonly T[],
+		selector: (
+			value: T,
+			index: number,
+			array: readonly T[],
+		) => [key: K, value: V],
+	) {
+		const map = new Map<K, V>();
+		for (const i of $range(0, array.size() - 1)) {
+			const element = array[i];
+			const [key, value] = selector(element, i, array);
+			map.set(key, value);
+		}
+		return map;
+	}
 }
