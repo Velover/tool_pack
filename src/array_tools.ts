@@ -205,6 +205,9 @@ export namespace ArrayTools {
 		return subtracted_array;
 	}
 
+	/**
+	 * compares 2 array, returns true if they have same elements
+	 */
 	export function Compare<T extends defined>(
 		array_0: readonly T[],
 		array_1: readonly T[],
@@ -212,8 +215,8 @@ export namespace ArrayTools {
 	) {
 		if (array_0.size() !== array_1.size()) return false;
 		for (const i of $range(0, array_0.size() - 1)) {
-			const value_0 = selector !== undefined ? selector(array_0) : undefined;
-			const value_1 = selector !== undefined ? selector(array_1) : undefined;
+			const value_0 = selector?.(array_0) ?? array_0[i];
+			const value_1 = selector?.(array_1) ?? array_1[i];
 			if (value_0 !== value_1) return false;
 		}
 		return true;
