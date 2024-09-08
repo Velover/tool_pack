@@ -49,6 +49,11 @@ export namespace MathTools {
 		return start + step;
 	}
 
+	/**compares 2 numbers with epsilon precision */
+	export function FuzzyEq(a: number, b: number, epsilon: number = 1e-5) {
+		return a === b || math.abs(a - b) <= (math.abs(a) + 1) * epsilon;
+	}
+
 	/**wraps angle to range [-pi, pi)
 	 * @see https://stackoverflow.com/questions/2320986/easy-way-to-keeping-angles-between-179-and-180-degrees
 	 */
