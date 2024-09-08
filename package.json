@@ -1,6 +1,6 @@
 {
 	"name": "@rbxts/tool_pack",
-	"version": "2.0.6",
+	"version": "2.0.7",
 	"main": "out/init.lua",
 	"scripts": {
 		"build": "rbxtsc",
@@ -25,19 +25,19 @@
 	},
 	"devDependencies": {
 		"@rbxts/compiler-types": "^2.3.0-types.1",
-		"@rbxts/types": "^1.0.790",
-		"@typescript-eslint/eslint-plugin": "^7.16.1",
-		"@typescript-eslint/parser": "^7.16.1",
+		"@rbxts/types": "^1.0.805",
+		"@typescript-eslint/eslint-plugin": "^7.18.0",
+		"@typescript-eslint/parser": "^7.18.0",
 		"eslint": "^8.57.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-prettier": "^5.2.1",
 		"eslint-plugin-roblox-ts": "^0.0.36",
 		"prettier": "^3.3.3",
 		"roblox-ts": "^2.3.0",
-		"typescript": "^5.5.3"
+		"typescript": "^5.5.4"
 	},
 	"dependencies": {
-		"@rbxts/services": "^1.5.4"
+		"@rbxts/services": "^1.5.5"
 	},
 	"bugs": {
 		"url": "https://github.com/Velover/tool_pack/issues"
