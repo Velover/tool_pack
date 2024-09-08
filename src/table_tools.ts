@@ -221,11 +221,11 @@ export namespace TableTools {
 		return ArrayTools.GetRandomElement(TableTools.GetValues(map));
 	}
 
-	export function GetOrCreate<K, V>(
-		map: Map<K, V>,
-		key: K,
-		create_callback: (key: K, map: Map<K, V>) => V,
-	) {
+	export function GetOrCreate<
+		T extends DefinedMap,
+		K = GetKeyType<T>,
+		V = GetValueType<T>,
+	>(map: Map<K, V>, key: K, create_callback: (key: K, map: Map<K, V>) => V) {
 		return map.get(key) ?? map.set(key, create_callback(key, map)).get(key)!;
 	}
 
