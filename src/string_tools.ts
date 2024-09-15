@@ -66,4 +66,17 @@ export namespace StringTools {
 
 		return part_1 + part_2;
 	}
+
+	export function IsUndefinedOrEmpty(string_value?: string) {
+		return string_value === "" || string_value === undefined;
+	}
+
+	export function IsUndefinedOrEmptyOrWhiteSpace(string_value?: string) {
+		if (string_value === "" || string_value === undefined) return true;
+		const characters = string_value.split(" ");
+		for (const character of characters) {
+			if (character !== "") return false;
+		}
+		return true;
+	}
 }
