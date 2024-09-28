@@ -260,4 +260,29 @@ export namespace TableTools {
 		}
 		return key_value_pairs;
 	}
+
+	export function MapToArray<K, V, Q extends defined>(
+		map: ReadonlyMap<K, V>,
+		selector: (key: K, value: V, map: ReadonlyMap<K, V>) => Q,
+	): Q[] {
+		const array: Q[] = [];
+		for (const [key, value] of map) {
+			const selected_value = selector(key, value, map);
+			array.push(selected_value);
+		}
+		return array;
+	}
+
+	export function MapToArrayFiltered<K, V, Q extends defined>(
+		map: ReadonlyMap<K, V>,
+		selector: (key: K, value: V, map: ReadonlyMap<K, V>) => Q | void,
+	): Q[] {
+		const array: Q[] = [];
+		for (const [key, value] of map) {
+			const selected_value = selector(key, value, map);
+			if (selected_value === undefined) continue;
+			array.push(selected_value);
+		}
+		return array;
+	}
 }
