@@ -329,10 +329,17 @@ export namespace TableTools {
 	 * @param ignore_missing_or_new_keys
 	 * @returns keys of different values
 	 */
-	export function GetDifferentValueKeys<K extends defined, Q>(
-		new_map: ReadonlyMap<K, defined>,
-		old_map: ReadonlyMap<K, defined>,
-		selector?: (value: defined) => Q,
+	export function GetDifferentValueKeys<K extends defined, V1, V2>(
+		new_map: ReadonlyMap<K, V1>,
+		old_map: ReadonlyMap<K, V2>,
+		selector?: (
+			value_1: V1,
+			value_2: V2,
+			key_1: K,
+			key_2: K,
+			map_1: ReadonlyMap<K, V1>,
+			map_2: ReadonlyMap<K, V2>,
+		) => boolean,
 		ignore_missing_or_new_keys: boolean = false,
 	): K[] {
 		const different_keys: K[] = [];
@@ -346,9 +353,21 @@ export namespace TableTools {
 				continue;
 			}
 
-			const selected_new_value = selector?.(value) ?? value;
-			const selected_old_value = selector?.(old_value) ?? old_value;
-			if (selected_new_value === selected_old_value) continue;
+			let are_same: boolean;
+			if (selector === undefined) {
+				are_same = value === old_value;
+			} else {
+				are_same = selector(
+					value,
+					old_value,
+					new_key,
+					new_key,
+					new_map,
+					old_map,
+				);
+			}
+
+			if (are_same) continue;
 			different_keys.push(new_key);
 		}
 
