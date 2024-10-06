@@ -285,4 +285,80 @@ export namespace TableTools {
 		}
 		return array;
 	}
+
+	/**
+	 *
+	 * @param new_map
+	 * @param old_map
+	 * @returns keys that dont exist in new_map, but exist in old_map
+	 */
+	export function GetMissingKeys<K extends defined>(
+		new_map: ReadonlyMap<K, unknown>,
+		old_map: ReadonlyMap<K, unknown>,
+	): K[] {
+		const missing_keys: K[] = [];
+
+		for (const [old_key] of old_map) {
+			if (!new_map.has(old_key)) missing_keys.push(old_key);
+		}
+		return missing_keys;
+	}
+
+	/**
+	 *
+	 * @param new_map
+	 * @param old_map
+	 * @returns keys that exist in new_map, but dont exist in old_map
+	 */
+	export function GetNewKeys<K extends defined>(
+		new_map: ReadonlyMap<K, unknown>,
+		old_map: ReadonlyMap<K, unknown>,
+	): K[] {
+		const new_keys: K[] = [];
+		for (const [new_key] of new_map) {
+			if (!old_map.has(new_key)) new_keys.push(new_key);
+		}
+		return new_keys;
+	}
+
+	/**
+	 *
+	 * @param new_map
+	 * @param old_map
+	 * @param selector
+	 * @param ignore_missing_or_new_keys
+	 * @returns keys of different values
+	 */
+	export function GetDifferentValueKeys<K extends defined, Q>(
+		new_map: ReadonlyMap<K, defined>,
+		old_map: ReadonlyMap<K, defined>,
+		selector?: (value: defined) => Q,
+		ignore_missing_or_new_keys: boolean = false,
+	): K[] {
+		const different_keys: K[] = [];
+		for (const [new_key, value] of new_map) {
+			const old_value = old_map.get(new_key);
+			if (old_value === undefined && ignore_missing_or_new_keys) continue;
+
+			//new keys
+			if (old_value === undefined) {
+				different_keys.push(new_key);
+				continue;
+			}
+
+			const selected_new_value = selector?.(value) ?? value;
+			const selected_old_value = selector?.(old_value) ?? old_value;
+			if (selected_new_value === selected_old_value) continue;
+			different_keys.push(new_key);
+		}
+
+		//missing keys
+		if (!ignore_missing_or_new_keys) {
+			for (const [old_key] of old_map) {
+				if (!new_map.has(old_key)) different_keys.push(old_key);
+			}
+		}
+
+		return different_keys;
+	}
 }
