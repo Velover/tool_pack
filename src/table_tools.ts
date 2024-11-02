@@ -1,57 +1,76 @@
 //!native
 import { ArrayTools } from "./array_tools";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyArray<T = any> = Array<T> | ReadonlyArray<T>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyMap<K = any, V = any> = Map<K, V> | ReadonlyMap<K, V>;
-export type AnyData = {} | AnyMap | AnyArray;
+export type Objectish = AnyObject | AnyArray | AnyMap | AnySet;
 
-type MutableInterface<T extends {}> = {
-	-readonly [key in keyof T]: T[key] extends AnyData ? Mutable<T[key]> : T[key];
-};
-type MutableMap<T extends AnyMap> =
-	T extends AnyMap<infer K, infer V>
-		? Map<K, V extends AnyData ? Mutable<V> : V>
-		: never;
-type MutableArray<T extends AnyArray> =
-	T extends AnyArray<infer V>
-		? Array<V extends AnyData ? Mutable<V> : V>
-		: never;
+export type AnyObject = { [key: string]: unknown };
+export type AnyArray = Array<unknown>;
+export type AnySet = Set<unknown>;
+export type AnyMap = Map<unknown, unknown>;
 
-type ImmutableInterface<T extends {}> = {
-	readonly [key in keyof T]: T[key] extends AnyData
-		? Immutable<T[key]>
-		: T[key];
-};
-type ImmutableMap<T extends AnyMap> =
-	T extends AnyMap<infer K, infer V>
-		? Map<K, V extends AnyData ? Immutable<V> : V>
-		: never;
-type ImmutableArray<T extends AnyArray> =
-	T extends AnyArray<infer V>
-		? Array<V extends AnyData ? Immutable<V> : V>
-		: never;
-
-export type DefinedTable = DefinedMap | DefinedArray;
-export type DefinedMap = Map<defined, defined>;
+export type DefinedObject = { [key: string]: defined };
 export type DefinedArray = Array<defined>;
+export type DefinedSet = Set<defined>;
+export type DefinedMap = Map<defined, defined>;
 
-export type Mutable<T extends AnyData> = T extends AnyMap
-	? MutableMap<T>
-	: T extends AnyArray
-		? MutableArray<T>
-		: T extends {}
-			? MutableInterface<T>
-			: never;
+type PrimitiveType = number | string | boolean;
+type AtomicObject = Callback | Promise<unknown>;
 
-export type Immutable<T extends AnyData> = T extends AnyMap
-	? ImmutableMap<T>
-	: T extends AnyArray
-		? ImmutableArray<T>
-		: T extends {}
-			? ImmutableInterface<T>
-			: never;
+/**
+ * If the lib "ES2015.Collection" is not included in tsconfig.json,
+ * types like ReadonlyArray, WeakMap etc. fall back to `any` (specified nowhere)
+ * or `{}` (from the node types), in both cases entering an infinite recursion in
+ * pattern matching type mappings
+ * This type can be used to cast these types to `void` in these cases.
+ */
+type IfAvailable<T, Fallback = void> =
+	// fallback if any
+	true | false extends (T extends never ? true : false)
+		? Fallback // fallback if empty type
+		: keyof T extends never
+			? Fallback // original type
+			: T;
+
+/**
+ * These should also never be mapped but must be tested after regular Map and
+ * Set
+ */
+type WeakReferences =
+	| IfAvailable<WeakMap<AnyObject, unknown>>
+	| IfAvailable<WeakSet<AnyObject>>;
+
+type MutableObject<T> = { -readonly [K in keyof T]: Mutable<T[K]> };
+
+/**@alias Draft in rbxts/immut */
+export type Mutable<T> = T extends PrimitiveType
+	? T
+	: T extends AtomicObject
+		? T
+		: T extends ReadonlyMap<infer K, infer V> // Map extends ReadonlyMap
+			? Map<Mutable<K>, Mutable<V>>
+			: T extends ReadonlySet<infer V> // Set extends ReadonlySet
+				? Set<Mutable<V>>
+				: T extends WeakReferences
+					? T
+					: T extends object
+						? MutableObject<T>
+						: T;
+
+type ImmutableObject<T> = { -readonly [K in keyof T]: Mutable<T[K]> };
+
+export type Immutable<T> = T extends PrimitiveType
+	? T
+	: T extends AtomicObject
+		? T
+		: T extends ReadonlyMap<infer K, infer V> // Map extends ReadonlyMap
+			? ReadonlyMap<Immutable<K>, Immutable<V>>
+			: T extends ReadonlySet<infer V> // Set extends ReadonlySet
+				? ReadonlySet<Immutable<V>>
+				: T extends WeakReferences
+					? T
+					: T extends object
+						? ImmutableObject<T>
+						: T;
 
 type Underfined<T> = { [P in keyof T]: P extends undefined ? T[P] : never };
 type FilterFlags<Base, Condition> = {
@@ -75,7 +94,7 @@ export namespace TableTools {
 	 * @param callback draft is a clone of the data with readonly flag removed
 	 * @returns new changed copy of data (draft)
 	 */
-	export function CopyData<Data extends AnyData>(
+	export function CopyData<Data extends Objectish>(
 		data: Data,
 		callback: (draft: Mutable<Data>) => void,
 	): Data {
@@ -86,7 +105,7 @@ export namespace TableTools {
 		return clone;
 	}
 
-	export function DeepCopyData<Data extends AnyData>(
+	export function DeepCopyData<Data extends object>(
 		data: Data,
 		callback?: (draft: Mutable<Data>) => void,
 	): Data {
@@ -94,7 +113,7 @@ export namespace TableTools {
 		type RecursiveMap = Map<string, defined | RecursiveArray | RecursiveMap>;
 
 		//clones the data
-		const clone = table.clone(data) as unknown as RecursiveArray;
+		const clone = table.clone(data) as RecursiveArray;
 		if (IsArray(clone)) {
 			//type is already array
 			const cloned_table = clone;
@@ -112,7 +131,7 @@ export namespace TableTools {
 			});
 		}
 
-		if (callback) callback(clone as unknown as Mutable<Data>);
+		if (callback) callback(clone as Mutable<Data>);
 
 		return clone as Data;
 	}
@@ -157,12 +176,12 @@ export namespace TableTools {
 		return values as GetValueType<T>[];
 	}
 
-	export function IsArray(data: DefinedTable) {
+	export function IsArray(data: object) {
 		return (data as DefinedMap).size() === (data as DefinedArray).size();
 	}
 
 	type RecursiveMap = Map<defined, defined | RecursiveMap>;
-	export function ExtractElementsFromRecursiveData<Data extends AnyData>(
+	export function ExtractElementsFromRecursiveData<Data extends object>(
 		data: Data,
 		check: (
 			element: defined,
