@@ -4,14 +4,13 @@ import { ArrayTools } from "./array_tools";
 export type Objectish = AnyObject | AnyArray | AnyMap | AnySet;
 
 export type AnyObject = { [key: string]: unknown };
-export type AnyArray = Array<unknown>;
-export type AnySet = Set<unknown>;
-export type AnyMap = Map<unknown, unknown>;
+export type AnyArray = readonly unknown[];
+export type AnySet = ReadonlySet<unknown>;
+export type AnyMap = ReadonlyMap<unknown, unknown>;
 
-export type DefinedObject = { [key: string]: defined };
-export type DefinedArray = Array<defined>;
-export type DefinedSet = Set<defined>;
-export type DefinedMap = Map<defined, defined>;
+export type DefinedArray = readonly defined[];
+export type DefinedSet = ReadonlySet<defined>;
+export type DefinedMap = ReadonlyMap<defined, defined>;
 
 type PrimitiveType = number | string | boolean;
 type AtomicObject = Callback | Promise<unknown>;

@@ -1,50 +1,51 @@
 {
-	"name": "@rbxts/tool_pack",
-	"version": "2.1.2",
-	"main": "out/init.lua",
-	"scripts": {
-		"build": "rbxtsc",
-		"watch": "rbxtsc -w --verbose",
-		"prepublishOnly": "npm run build"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/Velover/tool_pack.git#master"
-	},
-	"keywords": [],
-	"author": "Catargo",
-	"license": "MIT",
-	"types": "out/index.d.ts",
-	"files": [
-		"out",
-		"default.project.json",
-		"!**/*.tsbuildinfo"
-	],
-	"publishConfig": {
-		"access": "public"
-	},
-	"devDependencies": {
-		"@rbxts/compiler-types": "^3.0.0-types.0",
-		"@rbxts/types": "^1.0.813",
-		"@typescript-eslint/eslint-plugin": "^8.12.2",
-		"@typescript-eslint/parser": "^8.12.2",
-		"eslint": "^9.14.0",
-		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-prettier": "^5.2.1",
-		"eslint-plugin-roblox-ts": "^0.0.36",
-		"prettier": "^3.3.3",
-		"roblox-ts": "^3.0.0-dev-371f97c",
-		"typescript": "^5.5.4"
-	},
-	"dependencies": {
-		"@rbxts/services": "^1.5.5"
-	},
-	"bugs": {
-		"url": "https://github.com/Velover/tool_pack/issues"
-	},
-	"homepage": "https://github.com/Velover/tool_pack/tree/master#readme",
-	"description": "Documentation WIP\r For now you can read from the implementation",
-	"directories": {
-		"doc": "docs"
-	}
+  "name": "@rbxts/tool_pack",
+  "version": "2.1.4",
+  "main": "out/init.lua",
+  "scripts": {
+    "build": "rbxtsc",
+    "watch": "rbxtsc -w --verbose",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Velover/tool_pack.git#master"
+  },
+  "keywords": [],
+  "author": "Catargo",
+  "license": "MIT",
+  "types": "out/index.d.ts",
+  "files": [
+    "out",
+    "default.project.json",
+    "!**/*.tsbuildinfo"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@rbxts/compiler-types": "^3.0.0-types.0",
+    "@rbxts/types": "^1.0.813",
+    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "@typescript-eslint/parser": "^8.15.0",
+    "eslint": "^9.15.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-roblox-ts": "^0.0.36",
+    "prettier": "^3.3.3",
+    "roblox-ts": "^3.0.0-dev-371f97c",
+    "typescript": "^5.5.4",
+    "@types/bun": "latest"
+  },
+  "dependencies": {
+    "@rbxts/services": "^1.5.5"
+  },
+  "bugs": {
+    "url": "https://github.com/Velover/tool_pack/issues"
+  },
+  "homepage": "https://github.com/Velover/tool_pack/tree/master#readme",
+  "description": "Documentation WIP\r For now you can read from the implementation",
+  "directories": {
+    "doc": "docs"
+  }
 }
