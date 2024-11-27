@@ -213,8 +213,8 @@ export namespace TableTools {
 		return taken_elements;
 	}
 	export function Filter<K, V>(
-		map: Map<K, V>,
-		check: (value: V, key: K, map: Map<K, V>) => boolean,
+		map: ReadonlyMap<K, V>,
+		check: (value: V, key: K, map: ReadonlyMap<K, V>) => boolean,
 	) {
 		const filtered_map = new Map<K, V>();
 		for (const [key, value] of map) {
@@ -225,7 +225,7 @@ export namespace TableTools {
 	}
 
 	/**@returns first element from the map [key, value] */
-	export function GetFirst<K, V>(map: Map<K, V>) {
+	export function GetFirst<T extends DefinedMap>(map: T) {
 		for (const [key, value] of map) {
 			return $tuple(key, value);
 		}
