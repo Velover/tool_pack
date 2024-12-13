@@ -11,7 +11,7 @@ class Builder {
 		return this;
 	}
 	WithWaitTime(value: number) {
-		this.timer_.wait_time = value;
+		this.timer_.WaitTime = value;
 		return this;
 	}
 	WithAutoStart() {
@@ -34,7 +34,7 @@ type CallableBuilder = typeof Builder & { (): Builder };
 export class FlagTimer {
 	static Builder = Builder as CallableBuilder;
 
-	public wait_time = 1;
+	public WaitTime = 1;
 	private time_left_ = 0;
 	private current_time_ = 0;
 
@@ -49,9 +49,9 @@ export class FlagTimer {
 	// private constructor() {}
 	Start(time_sec = -1) {
 		if (time_sec > 0) {
-			this.wait_time = time_sec;
+			this.WaitTime = time_sec;
 		}
-		this.time_left_ = this.wait_time;
+		this.time_left_ = this.WaitTime;
 		this.current_time_ = os.clock();
 		this.stopped_ = false;
 	}

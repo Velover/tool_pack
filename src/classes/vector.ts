@@ -29,10 +29,10 @@ export class Vector {
 		return vectors_list;
 	}
 
-	readonly elements_: number[];
+	readonly Elements: number[];
 	private size_: number;
 	constructor(args: number[]) {
-		this.elements_ = table.clone(args);
+		this.Elements = table.clone(args);
 		this.size_ = args.size();
 	}
 
@@ -40,8 +40,8 @@ export class Vector {
 		const max_size = math.max(vector.GetSize(), this.size_);
 		const elements = new Array<number>(max_size);
 		for (const i of $range(0, max_size - 1)) {
-			const element_1 = this.elements_[i] ?? 0;
-			const element_2 = vector.elements_[i] ?? 0;
+			const element_1 = this.Elements[i] ?? 0;
+			const element_2 = vector.Elements[i] ?? 0;
 			elements[i] = element_1 + element_2;
 		}
 		return new Vector(elements);
@@ -51,8 +51,8 @@ export class Vector {
 		const max_size = math.max(vector.GetSize(), this.size_);
 		const elements = new Array<number>(max_size);
 		for (const i of $range(0, max_size - 1)) {
-			const element_1 = this.elements_[i] ?? 0;
-			const element_2 = vector.elements_[i] ?? 0;
+			const element_1 = this.Elements[i] ?? 0;
+			const element_2 = vector.Elements[i] ?? 0;
 			elements[i] = element_1 - element_2;
 		}
 		return new Vector(elements);
@@ -61,7 +61,7 @@ export class Vector {
 	MulNum(value: number) {
 		const elements = new Array<number>(this.size_);
 		for (const i of $range(0, this.size_ - 1)) {
-			elements[i] = this.elements_[i] * value;
+			elements[i] = this.Elements[i] * value;
 		}
 		return new Vector(elements);
 	}
@@ -70,8 +70,8 @@ export class Vector {
 		const max_size = math.max(vector.GetSize(), this.size_);
 		const elements = new Array<number>(max_size);
 		for (const i of $range(0, max_size - 1)) {
-			const element_1 = this.elements_[i] ?? 0;
-			const element_2 = vector.elements_[i] ?? 0;
+			const element_1 = this.Elements[i] ?? 0;
+			const element_2 = vector.Elements[i] ?? 0;
 			elements[i] = element_1 * element_2;
 		}
 		return new Vector(elements);
@@ -81,8 +81,8 @@ export class Vector {
 		const max_size = math.max(vector.GetSize(), this.size_);
 		const elements = new Array<number>(max_size);
 		for (const i of $range(0, max_size - 1)) {
-			const element_1 = this.elements_[i] ?? 0;
-			const element_2 = vector.elements_[i] ?? 0;
+			const element_1 = this.Elements[i] ?? 0;
+			const element_2 = vector.Elements[i] ?? 0;
 			elements[i] = element_1 / element_2;
 		}
 		return new Vector(elements);
@@ -92,7 +92,7 @@ export class Vector {
 	 * @param orthonormalize defaults to true
 	 */
 	ToCFrame(orthonormalize: boolean = true) {
-		const cframe = new CFrame(...(<CFrameComponents>this.elements_));
+		const cframe = new CFrame(...(<CFrameComponents>this.Elements));
 		return orthonormalize ? cframe.Orthonormalize() : cframe;
 	}
 

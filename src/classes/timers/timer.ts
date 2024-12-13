@@ -13,18 +13,18 @@ class Builder {
 		return this;
 	}
 	WithWaitTime(value: number) {
-		this.timer_.wait_time = value;
+		this.timer_.WaitTime = value;
 		return this;
 	}
 	WithOneShot(value: boolean) {
-		this.timer_.one_shot = value;
+		this.timer_.OneShot = value;
 		return this;
 	}
 	WithTimeOutCallback(
 		callback: (connection?: RBXScriptConnection) => void,
 		with_connection?: (connection: RBXScriptConnection) => void,
 	) {
-		const connection = this.timer_.on_time_out.Connect(() =>
+		const connection = this.timer_.OnTimeOut.Connect(() =>
 			callback(connection),
 		);
 		with_connection?.(connection);
@@ -49,7 +49,7 @@ setmetatable(Builder, {
 type CallableBuilder = typeof Builder & { (): Builder };
 export class Timer {
 	static Builder = Builder as CallableBuilder;
-	public wait_time = 1;
+	public WaitTime = 1;
 	private time_left_ = 0;
 	GetTimeLeft() {
 		return this.time_left_;
@@ -60,16 +60,16 @@ export class Timer {
 	 * if false timer works until the manual Stop()
 	 * * default is true
 	 */
-	public one_shot = true;
+	public OneShot = true;
 
-	public paused = false;
+	public Paused = false;
 	private stopped_ = true;
 	IsStopped() {
 		return this.stopped_;
 	}
 
 	private time_out_event_: BindableEvent = new Instance("BindableEvent");
-	readonly on_time_out: RBXScriptSignal = this.time_out_event_.Event;
+	readonly OnTimeOut: RBXScriptSignal = this.time_out_event_.Event;
 
 	private update_connection_?: RBXScriptConnection;
 
@@ -77,12 +77,12 @@ export class Timer {
 
 	Start(time_sec = -1) {
 		if (time_sec > 0) {
-			this.wait_time = time_sec;
+			this.WaitTime = time_sec;
 		}
 		//stops the existing timer
 		this.Stop();
 
-		this.time_left_ = this.wait_time;
+		this.time_left_ = this.WaitTime;
 		//takes stopped flag away
 		this.stopped_ = false;
 		this.update_connection_ = RunService.Heartbeat.Connect((delta_time) =>
@@ -92,16 +92,16 @@ export class Timer {
 
 	private Update(delta_time: number) {
 		//dont update if paused
-		if (this.paused) return;
+		if (this.Paused) return;
 
 		this.time_left_ -= delta_time;
 		if (this.time_left_ > 0) return;
 
 		this.time_out_event_.Fire();
 
-		if (!this.one_shot) {
+		if (!this.OneShot) {
 			//restarts the time if not oneshot
-			this.time_left_ = this.wait_time;
+			this.time_left_ = this.WaitTime;
 			return;
 		}
 
@@ -115,7 +115,7 @@ export class Timer {
 		//clamps the time
 		this.time_left_ = math.max(this.time_left_, 0);
 		this.update_connection_?.Disconnect();
-		this.paused = false;
+		this.Paused = false;
 		this.stopped_ = true;
 	}
 

@@ -10,11 +10,11 @@ class Builder {
 		return this;
 	}
 	WithWaitTime(value: number) {
-		this.timer_.wait_time = value;
+		this.timer_.WaitTime = value;
 		return this;
 	}
 	WithOneShot(value: boolean) {
-		this.timer_.one_shot = value;
+		this.timer_.OneShot = value;
 		return this;
 	}
 	WithTimeOutCallback(callback: () => void) {
@@ -22,11 +22,11 @@ class Builder {
 		return this;
 	}
 	WithYieldAfterCall(value: boolean) {
-		this.timer_.yield_after_call = value;
+		this.timer_.YieldAfterCall = value;
 		return this;
 	}
 	WithTerminateOld(value: boolean) {
-		this.timer_.terminate_old = value;
+		this.timer_.TerminateOld = value;
 		return this;
 	}
 	WithAutoStart() {
@@ -49,17 +49,17 @@ type CallableBuilder = typeof Builder & { (): Builder };
 export class CallbackTimer {
 	static Builder = Builder as CallableBuilder;
 
-	public wait_time = 1;
+	public WaitTime = 1;
 	/**dont restart the timer til the callback is finished.
 	 *
 	 *Applied only if one_shot is false
 	 */
-	public yield_after_call = false;
+	public YieldAfterCall = false;
 	/**stops the previous callback if it's still running.
 	 *
 	 *Applied only if one_shot is false
 	 */
-	public terminate_old = false;
+	public TerminateOld = false;
 	private start_time_ = 0;
 
 	/**
@@ -67,7 +67,7 @@ export class CallbackTimer {
 	 * if false timer works until the manual Stop()
 	 * default is true
 	 */
-	public one_shot = true;
+	public OneShot = true;
 
 	private stopped_ = true;
 	IsStopped() {
@@ -86,7 +86,7 @@ export class CallbackTimer {
 
 	Start(time_sec = -1) {
 		if (time_sec > 0) {
-			this.wait_time = time_sec;
+			this.WaitTime = time_sec;
 		}
 		//stops the existing timer
 		this.Stop();
@@ -104,11 +104,11 @@ export class CallbackTimer {
 	}
 
 	private Cycle() {
-		while (task.wait(this.wait_time)) {
-			if (this.terminate_old) this.TerminateCallbackThread();
-			if (this.yield_after_call) this.callback_();
+		while (task.wait(this.WaitTime)) {
+			if (this.TerminateOld) this.TerminateCallbackThread();
+			if (this.YieldAfterCall) this.callback_();
 			else this.callback_thread_ = task.spawn(this.callback_);
-			if (this.one_shot) break;
+			if (this.OneShot) break;
 		}
 		//cannot stop the thread from inside;
 		this.stopped_ = true;
@@ -149,7 +149,7 @@ export class CallbackTimer {
 	}
 
 	GetTimeLeft() {
-		return math.max(this.wait_time - (os.clock() - this.start_time_), 0);
+		return math.max(this.WaitTime - (os.clock() - this.start_time_), 0);
 	}
 
 	Destroy() {

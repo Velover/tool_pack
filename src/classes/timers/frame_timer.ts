@@ -16,11 +16,11 @@ class Builder {
 		return this;
 	}
 	WithWaitTime(value: number) {
-		this.timer_.wait_time = value;
+		this.timer_.WaitTime = value;
 		return this;
 	}
 	WithOneShot(value: boolean) {
-		this.timer_.one_shot = value;
+		this.timer_.OneShot = value;
 		return this;
 	}
 	WithUpdateCallback(callback: FrameTimerCallback) {
@@ -31,7 +31,7 @@ class Builder {
 		callback: (connection?: RBXScriptConnection) => void,
 		with_connection?: (connection: RBXScriptConnection) => void,
 	) {
-		const connection = this.timer_.on_time_out.Connect(() =>
+		const connection = this.timer_.OnTimeOut.Connect(() =>
 			callback(connection),
 		);
 		with_connection?.(connection);
@@ -151,7 +151,7 @@ export class FrameTimer {
 		auto_start: boolean = true,
 	) {
 		const timer = new FrameTimer();
-		timer.wait_time = wait_time;
+		timer.WaitTime = wait_time;
 		const alpha_generator = create_new_alpha_generator();
 		timer.SetUpdateCallback((time_passed, delta_time) => {
 			const alpha = time_passed / wait_time;
@@ -172,7 +172,7 @@ export class FrameTimer {
 		return timer;
 	}
 
-	public wait_time = 1;
+	public WaitTime = 1;
 	private time_left_ = 0;
 	GetTimeLeft() {
 		return this.time_left_;
@@ -185,16 +185,16 @@ export class FrameTimer {
 	 * if false timer works until the manual Stop()
 	 * * default is true
 	 */
-	public one_shot = true;
+	public OneShot = true;
 
-	public paused = false;
+	public Paused = false;
 	private stopped_ = true;
 	IsStopped() {
 		return this.stopped_;
 	}
 
 	private time_out_event_: BindableEvent = new Instance("BindableEvent");
-	readonly on_time_out: RBXScriptSignal = this.time_out_event_.Event;
+	readonly OnTimeOut: RBXScriptSignal = this.time_out_event_.Event;
 
 	private update_connection_?: RBXScriptConnection;
 
@@ -221,14 +221,14 @@ export class FrameTimer {
 
 	Start(time_sec = -1) {
 		if (time_sec > 0) {
-			this.wait_time = time_sec;
+			this.WaitTime = time_sec;
 		}
 		//stops the existing timer
 		this.Stop();
 
-		this.time_left_ = this.wait_time;
+		this.time_left_ = this.WaitTime;
 		//saves the time to calculate time passed
-		this.initialized_wait_time_ = this.wait_time;
+		this.initialized_wait_time_ = this.WaitTime;
 
 		//takes stopped flag away
 		this.stopped_ = false;
@@ -245,28 +245,28 @@ export class FrameTimer {
 	 */
 	Await(ignore_if_stopped: boolean = true) {
 		if (ignore_if_stopped && this.stopped_) return this;
-		this.on_time_out.Wait();
+		this.OnTimeOut.Wait();
 		return this;
 	}
 
 	private Update(delta_time: number) {
 		//dont update if paused
-		if (this.paused) return;
+		if (this.Paused) return;
 
 		this.time_left_ -= delta_time;
 		//clamps to wait time
 		const time_passed = math.min(
 			this.initialized_wait_time_ - this.time_left_,
-			this.wait_time,
+			this.WaitTime,
 		);
 		this.update_callback_(time_passed, delta_time);
 		if (this.time_left_ > 0) return;
 
 		this.time_out_event_.Fire();
 
-		if (!this.one_shot) {
+		if (!this.OneShot) {
 			//restarts the time if not oneshot
-			this.time_left_ = this.wait_time;
+			this.time_left_ = this.WaitTime;
 			return;
 		}
 
@@ -280,7 +280,7 @@ export class FrameTimer {
 		//clamps the time
 		this.time_left_ = math.max(this.time_left_, 0);
 		this.update_connection_?.Disconnect();
-		this.paused = false;
+		this.Paused = false;
 		this.stopped_ = true;
 
 		return this;

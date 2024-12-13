@@ -21,6 +21,7 @@ export namespace PhysicsTools {
 				((Workspace.Gravity / 2) * horizontal_distance * horizontal_distance) /
 					horizontal_speed) /
 			horizontal_distance;
+
 		return vertical_speed;
 	}
 
