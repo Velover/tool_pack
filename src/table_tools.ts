@@ -398,4 +398,47 @@ export namespace TableTools {
 
 		return different_keys;
 	}
+
+	/**
+	 * maps the map to the new map
+	 * @param map map
+	 * @param selector => [new_key, new_value]
+	 * @returns mapped map from map
+	 */
+	export function MapToNew<K0, V0, K1, V1>(
+		map: ReadonlyMap<K0, V0>,
+		selector: (key: K0, value: V0, map: ReadonlyMap<K0, V0>) => [K1, V1],
+	): Map<K1, V1> {
+		const output = new Map<K1, V1>();
+		for (const [key_0, value_0] of map) {
+			const [key_1, value_1] = selector(key_0, value_0, map);
+			output.set(key_1, value_1);
+		}
+
+		return output;
+	}
+
+	/**
+	 * maps the map to the new map, if no value was returned will filter the value
+	 * @param map map
+	 * @param selector => [new_key, new_value]
+	 * @returns mapped filtered map from map
+	 */
+	export function MapFiltered<K0, V0, K1, V1>(
+		map: ReadonlyMap<K0, V0>,
+		selector: (
+			key: K0,
+			value: V0,
+			map: ReadonlyMap<K0, V0>,
+		) => void | undefined | [K1, V1],
+	): Map<K1, V1> {
+		const output = new Map<K1, V1>();
+		for (const [key_0, value_0] of map) {
+			const selector_output = selector(key_0, value_0, map);
+			if (selector_output === undefined) continue;
+			output.set(selector_output[0], selector_output[1]);
+		}
+
+		return output;
+	}
 }

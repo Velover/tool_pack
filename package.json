@@ -1,6 +1,6 @@
 {
   "name": "@rbxts/tool_pack",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "main": "out/init.lua",
   "scripts": {
     "build": "rbxtsc",
@@ -26,15 +26,15 @@
   "devDependencies": {
     "@rbxts/compiler-types": "^3.0.0-types.0",
     "@rbxts/types": "^1.0.813",
-    "@typescript-eslint/eslint-plugin": "^8.15.0",
-    "@typescript-eslint/parser": "^8.15.0",
-    "eslint": "^9.15.0",
+    "@typescript-eslint/eslint-plugin": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
+    "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-roblox-ts": "^0.0.36",
-    "prettier": "^3.3.3",
+    "prettier": "^3.4.2",
     "roblox-ts": "^3.0.0-dev-371f97c",
-    "typescript": "^5.5.4",
+    "typescript": "^5.7.2",
     "@types/bun": "latest"
   },
   "dependencies": {
