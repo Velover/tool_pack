@@ -125,6 +125,15 @@ export namespace ArrayTools {
 		return array;
 	}
 
+	/**pushes element to the array if it doesnt exist */
+	export function PushIfDoesntExist<T extends defined>(
+		array: Array<T>,
+		element: T,
+	) {
+		if (array.includes(element)) return;
+		array.push(element);
+	}
+
 	/**
 	 * @param arrays
 	 * @returns array that contains all elements from arrays
