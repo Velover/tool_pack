@@ -1,6 +1,6 @@
 {
   "name": "@rbxts/tool_pack",
-  "version": "2.1.7",
+  "version": "2.1.8",
   "main": "out/init.lua",
   "scripts": {
     "build": "rbxtsc",
