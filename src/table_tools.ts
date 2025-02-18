@@ -265,6 +265,17 @@ export namespace TableTools {
 		}
 	}
 
+	export function Includes<K, V>(
+		map: ReadonlyMap<K, V>,
+		check: (element: V, key: K, map: ReadonlyMap<K, V>) => boolean,
+	): boolean {
+		for (const [key, value] of map) {
+			if (check(value, key, map)) return true;
+		}
+
+		return false;
+	}
+
 	export function KeyOf<K, V>(map: ReadonlyMap<K, V>, seached_value: V) {
 		for (const [key, value] of map) {
 			if (seached_value === value) return key;
