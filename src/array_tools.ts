@@ -6,6 +6,7 @@ export namespace ArrayTools {
 	 *
 	 * @param array
 	 * @returns shuffled copy of array
+	 * @deprecated use new Random().Shuffle() instead
 	 */
 	export function Shuffle<T extends defined>(array: readonly T[]) {
 		const array_size = array.size();
@@ -251,10 +252,7 @@ export namespace ArrayTools {
 		index_0: number,
 		index_1: number,
 	) {
-		const element_0 = array[index_0];
-		const element_1 = array[index_1];
-		array[index_0] = element_1;
-		array[index_1] = element_0;
+		[array[index_0], array[index_1]] = [array[index_1], array[index_0]];
 	}
 
 	/**
