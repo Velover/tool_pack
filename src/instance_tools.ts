@@ -183,6 +183,7 @@ export namespace InstanceTools {
 	export function DeepRemoveTags(instance: Instance) {
 		const descendants = instance.GetDescendants();
 		descendants.forEach(RemoveTags);
+		RemoveTags(instance);
 	}
 
 	export function WaitForPath<T extends Instance = Instance>(
